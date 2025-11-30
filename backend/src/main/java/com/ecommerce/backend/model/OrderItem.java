@@ -17,12 +17,10 @@ public class OrderItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // FK → Order
     @ManyToOne
     @JoinColumn(name = "order_id", nullable = false)
     private Order order;
 
-    // FK → Product
     @ManyToOne
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
@@ -32,7 +30,6 @@ public class OrderItem {
     @Column(name = "unit_price")
     private BigDecimal unitPrice;
 
-    // line_total là GENERATED ALWAYS, không cần set từ backend
     @Column(name = "line_total", insertable = false, updatable = false)
     private BigDecimal lineTotal;
 }

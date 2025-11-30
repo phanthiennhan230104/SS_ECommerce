@@ -21,6 +21,8 @@ import {
   validateConfirmPassword
 } from "../../utils/validation";
 
+import { sendOtp, verifyOtp } from "../../api/auth";
+
 export default function RegisterPage() {
   const [formData, setFormData] = useState({
     fullName: "",
@@ -32,41 +34,90 @@ export default function RegisterPage() {
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   const [agreeTerms, setAgreeTerms] = useState(false);
   const [errors, setErrors] = useState({});
+  const [otpError, setOtpError] = useState("");
+
   const [isLoading, setIsLoading] = useState(false);
+  const [otpStep, setOtpStep] = useState(false);
+  const [otp, setOtp] = useState("");
 
   const update = (field) => (e) =>
     setFormData({ ...formData, [field]: e.target.value });
 
-  const handleRegister = () => {
+  // -------------------------------------------
+  // HANDLE SEND OTP
+  // -------------------------------------------
+  const handleRegister = async () => {
     const newErrors = {};
 
-    let fullNameError = validateFullName(formData.fullName);
-    let emailError = validateEmail(formData.email);
-    let phoneError = validatePhone(formData.phone);
-    let passwordError = validatePassword(formData.password);
-    let confirmError = validateConfirmPassword(
+    newErrors.fullName = validateFullName(formData.fullName);
+    newErrors.email = validateEmail(formData.email);
+    newErrors.phone = validatePhone(formData.phone);
+    newErrors.password = validatePassword(formData.password);
+    newErrors.confirmPassword = validateConfirmPassword(
       formData.password,
       formData.confirmPassword
     );
 
-    if (fullNameError) newErrors.fullName = fullNameError;
-    if (emailError) newErrors.email = emailError;
-    if (phoneError) newErrors.phone = phoneError;
-    if (passwordError) newErrors.password = passwordError;
-    if (confirmError) newErrors.confirmPassword = confirmError;
-    if (!agreeTerms)
-      newErrors.terms = "You must agree to the terms and conditions.";
+    if (!agreeTerms) newErrors.terms = "You must agree to the terms.";
+
+    // Remove empty errors
+    Object.keys(newErrors).forEach(
+      (key) => !newErrors[key] && delete newErrors[key]
+    );
 
     setErrors(newErrors);
 
-    if (Object.keys(newErrors).length === 0) {
+    if (Object.keys(newErrors).length > 0) return;
+
+    try {
       setIsLoading(true);
-      setTimeout(() => {
-        setIsLoading(false);
-        alert("Account created successfully!");
-      }, 1500);
+      setOtpError("");
+
+      await sendOtp({
+        email: formData.email,
+        fullName: formData.fullName,
+        password: formData.password
+      });
+
+      setOtpStep(true);
+      setIsLoading(false);
+      alert("OTP has been sent to your email!");
+
+    } catch (err) {
+      setIsLoading(false);
+      alert(err.response?.data || "Failed to send OTP");
+    }
+  };
+
+  // -------------------------------------------
+  // HANDLE VERIFY OTP
+  // -------------------------------------------
+  const handleVerifyOtp = async () => {
+    if (!otp) {
+      setOtpError("Please enter the OTP.");
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      setOtpError("");
+
+      await verifyOtp({
+        email: formData.email,
+        fullName: formData.fullName,
+        password: formData.password,
+        otp: otp
+      });
+
+      alert("Registration successful!");
+      window.location.href = "/login";
+
+    } catch (err) {
+      setIsLoading(false);
+      setOtpError("Invalid OTP, please try again.");
     }
   };
 
@@ -80,89 +131,125 @@ export default function RegisterPage() {
         <div className="register-card">
           <RegisterHeader />
 
-          {/* Full name */}
-          <label className="form-label">Full Name</label>
-          <FormInput
-            type="text"
-            placeholder="John Doe"
-            value={formData.fullName}
-            onChange={update("fullName")}
-            icon={User}
-            error={errors.fullName}
-          />
+          {/* ============ OTP STEP ============ */}
+          {otpStep ? (
+            <>
+              <label className="form-label">Enter OTP</label>
 
-          {/* Email */}
-          <label className="form-label">Email Address</label>
-          <FormInput
-            type="email"
-            placeholder="you@example.com"
-            value={formData.email}
-            onChange={update("email")}
-            icon={Mail}
-            error={errors.email}
-          />
+              <FormInput
+                type="text"
+                placeholder="6-digit code"
+                value={otp}
+                onChange={(e) => setOtp(e.target.value)}
+                icon={Lock}
+                error={otpError}
+              />
 
-          {/* Phone */}
-          <label className="form-label">Phone Number</label>
-          <FormInput
-            type="tel"
-            placeholder="0123456789"
-            value={formData.phone}
-            onChange={update("phone")}
-            icon={Phone}
-            error={errors.phone}
-          />
+              <RegisterButton
+                isLoading={isLoading}
+                onClick={handleVerifyOtp}
+                text="Verify OTP"
+              />
 
-          {/* Password */}
-          <label className="form-label">Password</label>
-          <FormInput
-            type="password"
-            placeholder="Create a strong password"
-            value={formData.password}
-            onChange={update("password")}
-            icon={Lock}
-            showPasswordToggle
-            showPassword={showPassword}
-            onTogglePassword={() => setShowPassword(!showPassword)}
-            error={errors.password}
-          />
-          <PasswordStrengthIndicator password={formData.password} />
+              <p className="signup-link" style={{ marginTop: "15px" }}>
+                Didn't receive OTP?{" "}
+                <span
+                  style={{ color: "#9333ea", cursor: "pointer" }}
+                  onClick={!isLoading ? handleRegister : undefined}
+                >
+                  Resend
+                </span>
+              </p>
+            </>
+          ) : (
+            <>
+              {/* ============ REGISTER FORM ============ */}
 
-          {/* Confirm Password */}
-          <label className="form-label">Confirm Password</label>
-          <FormInput
-            type="password"
-            placeholder="Re-enter your password"
-            value={formData.confirmPassword}
-            onChange={update("confirmPassword")}
-            icon={Lock}
-            showPasswordToggle
-            showPassword={showConfirmPassword}
-            onTogglePassword={() => setShowConfirmPassword(!showConfirmPassword)}
-            error={errors.confirmPassword}
-          />
+              <label className="form-label">Full Name</label>
+              <FormInput
+                type="text"
+                value={formData.fullName}
+                placeholder="John Doe"
+                onChange={update("fullName")}
+                icon={User}
+                error={errors.fullName}
+              />
 
-          {/* Terms */}
-          <label className="terms-box">
-            <input
-              type="checkbox"
-              checked={agreeTerms}
-              onChange={(e) => setAgreeTerms(e.target.checked)}
-            />
-            <span>I agree to the Terms & Privacy Policy</span>
-          </label>
-          {errors.terms && (
-            <p className="error-message">{errors.terms}</p>
+              <label className="form-label">Email Address</label>
+              <FormInput
+                type="email"
+                value={formData.email}
+                placeholder="you@example.com"
+                onChange={update("email")}
+                icon={Mail}
+                error={errors.email}
+              />
+
+              <label className="form-label">Phone Number</label>
+              <FormInput
+                type="tel"
+                value={formData.phone}
+                placeholder="0123456789"
+                onChange={update("phone")}
+                icon={Phone}
+                error={errors.phone}
+              />
+
+              <label className="form-label">Password</label>
+              <FormInput
+                type="password"
+                value={formData.password}
+                placeholder="Create a strong password"
+                onChange={update("password")}
+                icon={Lock}
+                showPasswordToggle
+                showPassword={showPassword}
+                onTogglePassword={() => setShowPassword(!showPassword)}
+                error={errors.password}
+              />
+
+              <label className="form-label">Confirm Password</label>
+              <FormInput
+                type="password"
+                value={formData.confirmPassword}
+                placeholder="Re-enter your password"
+                onChange={update("confirmPassword")}
+                icon={Lock}
+                showPasswordToggle
+                showPassword={showConfirmPassword}
+                onTogglePassword={() =>
+                  setShowConfirmPassword(!showConfirmPassword)
+                }
+                error={errors.confirmPassword}
+              />
+
+              <label className="terms-box">
+                <input
+                  type="checkbox"
+                  checked={agreeTerms}
+                  onChange={(e) => setAgreeTerms(e.target.checked)}
+                />
+                <span>I agree to the Terms & Privacy Policy</span>
+              </label>
+              {errors.terms && (
+                <p className="error-message">{errors.terms}</p>
+              )}
+
+              <RegisterButton
+                isLoading={isLoading}
+                onClick={handleRegister}
+                text="Create Account"
+              />
+
+              <p className="signup-link">
+                Already have an account?
+                <Link to="/login" className="signup-button">
+                  {" "}
+                  Sign in
+                </Link>
+              </p>
+            </>
           )}
-
-          {/* Button */}
-          <RegisterButton isLoading={isLoading} onClick={handleRegister} />
-
-          {/* Login link */}
-          <p className="signup-link">
-            Already have an account?
-            <Link to="/login" className="signup-button"> Sign in</Link>
-          </p>
         </div>
 
         <LiveUsersIndicator count={5234} />
