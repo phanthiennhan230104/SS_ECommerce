@@ -1,0 +1,275 @@
+/* -------------------------------------------
+   REGISTER PAGE — CLEAN FIXED VERSION (2025)
+-------------------------------------------- */
+
+/* Page Container */
+.register-container {
+  min-height: 100vh; 
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  background: linear-gradient(135deg, #9333ea, #ec4899, #ef4444);
+  padding: 4rem 1.5rem 4rem;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Background Animation */
+.bg-animation {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.bg-blob-1,
+.bg-blob-2 {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(90px);
+  opacity: 0.8;
+  animation: blob-pulse 4s ease-in-out infinite;
+}
+
+.bg-blob-1 {
+  top: 5rem;
+  left: 4rem;
+  width: 18rem;
+  height: 18rem;
+  background: rgba(255,255,255,0.1);
+}
+
+.bg-blob-2 {
+  bottom: 5rem;
+  right: 4rem;
+  width: 22rem;
+  height: 22rem;
+  background: rgba(253, 224, 71, 0.14);
+  animation-delay: 1s;
+}
+
+@keyframes blob-pulse {
+  0%, 100% { transform: scale(1); opacity: .9; }
+  50% { transform: scale(1.1); opacity: .7; }
+}
+
+/* Wrapper */
+.register-wrapper {
+  width: 100%;
+  max-width: 440px;
+  position: relative;
+  z-index: 5;
+}
+
+/* Flash Badge */
+.flash-badge {
+  position: absolute;
+  top: -1.6rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #facc15;
+  color: #b91c1c;
+  padding: 0.5rem 1.4rem;
+  border-radius: 999px;
+  font-size: .85rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+  animation: badge-bounce 1.2s infinite;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+@keyframes badge-bounce {
+  0%,100% { transform: translate(-50%, 0); }
+  50% { transform: translate(-50%, -6px); }
+}
+
+/* Card */
+.register-card {
+  background: #fff;
+  padding: 2rem;
+  border-radius: 1.2rem;
+  box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.25);
+  width: 100%;
+  margin-top: 2rem;
+}
+
+/* Header */
+.login-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.logo-container {
+  width: 64px;
+  height: 64px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #9333ea, #ec4899);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
+}
+
+.login-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.login-subtitle {
+  font-size: .9rem;
+  color: #6b7280;
+}
+
+/* -------------------------
+    FORM INPUT FIELDS
+-------------------------- */
+
+.form-label {
+  font-size: .9rem;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: .3rem;
+  margin-left: .2rem;
+  display: block;
+}
+
+.input-wrapper {
+  width: 100%;
+  margin-bottom: 1rem;
+  position: relative;
+}
+
+.input-icon {
+  position: absolute;
+  top: 50%;
+  left: .9rem;
+  transform: translateY(-50%);
+  color: #9ca3af;
+}
+
+.form-input {
+  width: 100%;
+  padding: .85rem .9rem .85rem 2.7rem;
+  border-radius: .6rem;
+  border: 1px solid #d1d5db;
+  font-size: .9rem;
+  transition: all .2s;
+}
+
+.form-input:focus {
+  border-color: #9333ea;
+  box-shadow: 0 0 0 2px rgba(147,51,234,.3);
+  outline: none;
+}
+
+.form-input.error {
+  border-color: #ef4444;
+}
+
+.password-toggle {
+  position: absolute;
+  top: 50%;
+  right: .8rem;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #9ca3af;
+}
+
+.form-input.with-toggle {
+  padding-right: 3rem;
+}
+
+/* Validation error */
+.error-message {
+  font-size: .8rem;
+  color: #ef4444;
+  margin-top: -.5rem;
+  margin-bottom: .5rem;
+}
+
+/* -------------------------
+      TERMS CHECKBOX
+-------------------------- */
+
+.terms-box {
+  display: flex;
+  gap: .6rem;
+  align-items: center;
+  font-size: .9rem;
+  margin-top: .5rem;
+  margin-bottom: .7rem;
+  color: #4b5563;
+}
+
+.terms-box input {
+  width: 1rem;
+  height: 1rem;
+}
+
+/* -------------------------
+      REGISTER BUTTON
+-------------------------- */
+
+.login-button {
+  width: 100%;
+  padding: .9rem;
+  border-radius: .7rem;
+  border: none;
+  background: linear-gradient(90deg, #9333ea, #ec4899);
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: .7rem;
+  display: flex;
+  justify-content: center;
+  gap: .5rem;
+}
+
+.login-button:hover {
+  background: linear-gradient(90deg, #7e22ce, #db2777);
+}
+
+.spinner {
+  width: 1rem;
+  height: 1rem;
+  border-radius: 999px;
+  border: 2px solid #fff;
+  border-top-color: transparent;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* -------------------------
+      SIGN IN LINK
+-------------------------- */
+
+.signup-link {
+  text-align: center;
+  margin-top: 1.2rem;
+  font-size: .9rem;
+  color: #4b5563;
+}
+
+.signup-button {
+  background: none;
+  border: none;
+  font-weight: 600;
+  color: #9333ea;
+  cursor: pointer;
+}
+
+.signup-button:hover {
+  color: #7e22ce;
+}
+
+/* Live Users */
+.live-users {
+  margin-top: 1.2rem;
+  text-align: center;
+}
