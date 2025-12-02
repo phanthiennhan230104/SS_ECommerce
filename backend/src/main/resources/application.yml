@@ -1,24 +1,45 @@
 spring:
+  config:
+    import: optional:file:.env
+
   application:
     name: ecommerce-backend
 
   datasource:
-    url: jdbc:mysql://localhost:3310/ecommerce?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Ho_Chi_Minh
-    username: root          
+    url: jdbc:mysql://localhost:3306/ecommerce?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+    username: root
     password: root
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
     hibernate:
-      ddl-auto: validate    
+      ddl-auto: update      
     show-sql: true
     properties:
       hibernate:
         format_sql: true
+        dialect: org.hibernate.dialect.MySQLDialect   
 
   sql:
     init:
-      mode: never           
+      mode: never
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: nguyentin.22042004@gmail.com
+    password: xdlqhuyzuqflmwgd 
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 
 server:
-  port: 8081
+  port: 8080

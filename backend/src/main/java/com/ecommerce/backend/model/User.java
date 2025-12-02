@@ -31,20 +31,25 @@ public class User {
     @Column(name = "email_verified")
     private boolean emailVerified;
 
-    @Enumerated(EnumType.STRING)
-    private Provider provider;
-
-    @Column(name = "created_at")
+    @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
-    @Column(name = "updated_at")
+    @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
+
+    @PrePersist
+    public void prePersist() {
+        LocalDateTime now = LocalDateTime.now();
+        this.createdAt = now;
+        this.updatedAt = now;
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+        this.updatedAt = LocalDateTime.now();
+    }
 
     public enum Role {
         CUSTOMER, SELLER, ADMIN
-    }
-
-    public enum Provider {
-        LOCAL, GOOGLE
     }
 }
