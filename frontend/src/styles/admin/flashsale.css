@@ -1,6 +1,6 @@
 /* ==== WRAPPER FLASH SALE TRONG ADMIN ==== */
 .flash-page-wrapper {
-  margin-top: 0px; /* kéo lên gần Admin Panel (giống product) */
+  margin-top: 0;
 }
 
 /* ==== FLASH SALE MANAGEMENT PAGE ==== */
@@ -8,22 +8,23 @@
 .flash-page {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 0 40px 40px;
+  padding: 0 32px 32px;
 }
 
 /* Header trên cùng */
 .flash-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
+  gap: 16px;
   margin-bottom: 24px;
 }
 
 .flash-header-title {
-  font-size: 28px;
+  font-size: 26px;
   font-weight: 700;
   margin: 0 0 4px;
-  color: #111827;
+  color: #0f172a;
 }
 
 .flash-header-subtitle {
@@ -37,13 +38,13 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 10px 18px;
+  padding: 9px 16px;
   border-radius: 999px;
   border: none;
-  background: linear-gradient(135deg, #ec4899, #f97316);
-  box-shadow: 0 10px 30px rgba(236, 72, 153, 0.35);
+  background: linear-gradient(135deg, #2563eb, #ec4899);
+  box-shadow: 0 10px 25px rgba(37, 99, 235, 0.25);
   color: #ffffff;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   cursor: pointer;
   transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
@@ -56,8 +57,8 @@
 
 .flash-add-btn:hover {
   transform: translateY(-1px);
-  box-shadow: 0 16px 40px rgba(236, 72, 153, 0.45);
-  opacity: 0.96;
+  box-shadow: 0 16px 35px rgba(37, 99, 235, 0.35);
+  opacity: 0.97;
 }
 
 /* Stats card nhỏ */
@@ -72,17 +73,17 @@
   background: #ffffff;
   border-radius: 16px;
   border: 1px solid #e5e7eb;
-  padding: 16px 18px;
-  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.05);
+  padding: 14px 16px;
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
 }
 
 .flash-stat-title {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
   color: #6b7280;
   margin-bottom: 4px;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.06em;
 }
 
 .flash-stat-value {
@@ -101,7 +102,7 @@
 .flash-toolbar {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: 10px;
   align-items: center;
   margin-bottom: 16px;
 }
@@ -109,21 +110,22 @@
 .flash-search-input {
   flex: 1;
   min-width: 220px;
-  padding: 9px 12px;
+  padding: 8px 14px;
   border-radius: 999px;
   border: 1px solid #e5e7eb;
   background: #ffffff;
   font-size: 14px;
   outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 .flash-search-input:focus {
-  border-color: #ec4899;
-  box-shadow: 0 0 0 1px rgba(236, 72, 153, 0.4);
+  border-color: #2563eb;
+  box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.35);
 }
 
 .flash-filter-select {
-  padding: 9px 12px;
+  padding: 8px 12px;
   border-radius: 999px;
   border: 1px solid #e5e7eb;
   background: #ffffff;
@@ -136,6 +138,7 @@
   border-radius: 16px;
   border: 1px solid #e5e7eb;
   overflow: hidden;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
 }
 
 .flash-table-wrapper {
@@ -153,7 +156,7 @@
 
 .flash-table th,
 .flash-table td {
-  padding: 10px 14px;
+  padding: 9px 12px;
   font-size: 13px;
   text-align: left;
   white-space: nowrap;
@@ -165,12 +168,12 @@
   color: #6b7280;
 }
 
-.flash-table tr:nth-child(even) {
+.flash-table tbody tr:nth-child(even) {
   background: #f9fafb;
 }
 
-.flash-table tr:hover {
-  background: #f3f4f6;
+.flash-table tbody tr:hover {
+  background: #eff6ff;
 }
 
 .flash-status-pill {
@@ -184,7 +187,7 @@
 
 .flash-status-live {
   background: #dcfce7;
-  color: #16a34a;
+  color: #15803d;
 }
 
 .flash-status-upcoming {
@@ -205,11 +208,17 @@
 
 .flash-btn-icon {
   border-radius: 999px;
-  padding: 6px 10px;
+  padding: 5px 10px;
   border: 1px solid #d1d5db;
   background: #ffffff;
   font-size: 12px;
   cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+}
+
+.flash-btn-icon:hover {
+  background: #f3f4f6;
+  transform: translateY(-1px);
 }
 
 .flash-btn-icon.edit {
@@ -246,7 +255,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 14px;
+  margin-bottom: 12px;
 }
 
 .flash-modal-title {
@@ -264,6 +273,10 @@
   justify-content: center;
   background: #f3f4f6;
   cursor: pointer;
+}
+
+.flash-modal-close:hover {
+  background: #e5e7eb;
 }
 
 .flash-modal-body {
@@ -293,6 +306,13 @@
   font-size: 14px;
 }
 
+.flash-field input:focus,
+.flash-field select:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.35);
+}
+
 .flash-modal-footer {
   display: flex;
   justify-content: flex-end;
@@ -308,24 +328,37 @@
   cursor: pointer;
 }
 
+.flash-btn-secondary:hover {
+  background: #f3f4f6;
+}
+
 .flash-btn-primary {
   padding: 8px 16px;
   border-radius: 999px;
   border: none;
-  background: linear-gradient(135deg, #ec4899, #f97316);
+  background: linear-gradient(135deg, #2563eb, #ec4899);
   color: #ffffff;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
 }
 
+.flash-btn-primary:hover {
+  opacity: 0.96;
+}
+
 /* Responsive */
 @media (max-width: 960px) {
   .flash-page {
-    padding: 0 16px 32px;
+    padding: 0 16px 28px;
   }
 
   .flash-stats-grid {
     grid-template-columns: 1fr;
+  }
+
+  .flash-header {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }

@@ -29,8 +29,8 @@ function ProductCard({ name, price, stock, image, label, status }) {
     status === "in-stock"
       ? "status-in-stock"
       : status === "low-stock"
-      ? "status-low-stock"
-      : "status-out-of-stock";
+        ? "status-low-stock"
+        : "status-out-of-stock";
 
   return (
     <div className="product-card">
@@ -79,8 +79,19 @@ export function ProductManagement() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  // ✅ state cho form thêm sản phẩm
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [form, setForm] = useState({
+    name: "",
+    price: "",
+    stock: "",
+    imageUrl: "",
+    description: "",
+    status: "ACTIVE",
+  });
+
   // TODO: chỉnh baseURL nếu bạn dùng port khác
-  const API_URL = "http://localhost:8081/api/admin/products";
+  const API_BASE = "http://localhost:8081/api/admin/products";
 
   // gọi API lấy sản phẩm khi load trang
   useEffect(() => {
@@ -88,7 +99,7 @@ export function ProductManagement() {
       try {
         setLoading(true);
         setError("");
-        const res = await fetch(API_URL);
+        const res = await fetch(API_BASE);
         if (!res.ok) {
           throw new Error(`Lỗi tải sản phẩm: ${res.status}`);
         }
@@ -104,6 +115,69 @@ export function ProductManagement() {
 
     fetchProducts();
   }, []);
+
+  // ✅ mở form thêm
+  const handleOpenAdd = () => {
+    setForm({
+      name: "",
+      price: "",
+      stock: "",
+      imageUrl: "",
+      description: "",
+      status: "ACTIVE",
+    });
+    setShowAddForm(true);
+  };
+
+  // ✅ handle change form
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  // ✅ submit form -> gọi API POST -> thêm vào state
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      setError("");
+
+      const token = localStorage.getItem("token");
+
+      const payload = {
+  name: form.name,
+  description: form.description,
+  price: Number(form.price),
+  stock: Number(form.stock),
+  imageUrl: form.imageUrl,
+  status: form.status,
+};
+
+
+      const res = await fetch(API_BASE, {   // ✅ KHÔNG /create nữa
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify(payload),
+      });
+
+
+
+      if (!res.ok) {
+        const msg = await res.text();
+        throw new Error(msg || "Không thêm được sản phẩm");
+      }
+
+      const created = await res.json();
+      // thêm sản phẩm mới lên đầu list
+      setProducts((prev) => [created, ...prev]);
+      setShowAddForm(false);
+    } catch (e) {
+      console.error(e);
+      setError(e.message || "Không thêm được sản phẩm");
+    }
+  };
 
   // tính toán số liệu thống kê
   const { totalProducts, lowStockCount, totalValue } = useMemo(() => {
@@ -147,15 +221,124 @@ export function ProductManagement() {
             </p>
           </div>
 
-          {/* nút thêm – hiện tại chỉ là nút, bạn có thể gắn modal giống Flash Sale sau */}
+          {/* ✅ nút thêm: mở form */}
           <button
             type="button"
             className="product-add-btn"
-            onClick={() => alert("Sau này sẽ mở form thêm sản phẩm")}
+            onClick={handleOpenAdd}
           >
             <Plus /> Thêm sản phẩm
           </button>
         </div>
+
+        {/* MODAL THÊM SẢN PHẨM – giống Flash Sale */}
+        {showAddForm && (
+          <div className="modal-backdrop">
+            <div className="modal">
+              <div className="modal-header">
+                <h2>Thêm sản phẩm</h2>
+                <button
+                  type="button"
+                  className="modal-close"
+                  onClick={() => setShowAddForm(false)}
+                >
+                  ×
+                </button>
+              </div>
+
+              <form onSubmit={handleSubmit}>
+                <div className="modal-body">
+                  <div className="modal-field">
+                    <label>Tên sản phẩm</label>
+                    <input
+                      name="name"
+                      value={form.name}
+                      onChange={handleChange}
+                      required
+                      placeholder="VD: iPhone 15 Pro 128GB"
+                    />
+                  </div>
+
+                  <div className="modal-row">
+                    <div className="modal-field">
+                      <label>Giá (VND)</label>
+                      <input
+                        type="number"
+                        name="price"
+                        value={form.price}
+                        onChange={handleChange}
+                        required
+                        min="0"
+                        placeholder="VD: 29990000"
+                      />
+                    </div>
+
+                    <div className="modal-field">
+                      <label>Tồn kho</label>
+                      <input
+                        type="number"
+                        name="stock"
+                        value={form.stock}
+                        onChange={handleChange}
+                        required
+                        min="0"
+                        placeholder="VD: 10"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="modal-field">
+                    <label>Ảnh (URL)</label>
+                    <input
+                      name="imageUrl"
+                      value={form.imageUrl}
+                      onChange={handleChange}
+                      placeholder="VD: https://...jpg"
+                    />
+                  </div>
+
+                  <div className="modal-field">
+                    <label>Trạng thái</label>
+                    <select
+                      name="status"
+                      value={form.status}
+                      onChange={handleChange}
+                    >
+                      <option value="ACTIVE">ACTIVE</option>
+                      <option value="INACTIVE">INACTIVE</option>
+                      <option value="OUT_OF_STOCK">OUT_OF_STOCK</option>
+                    </select>
+                  </div>
+
+                  <div className="modal-field">
+                    <label>Mô tả</label>
+                    <textarea
+                      name="description"
+                      value={form.description}
+                      onChange={handleChange}
+                      rows={3}
+                      placeholder="Mô tả ngắn về sản phẩm..."
+                    />
+                  </div>
+                </div>
+
+                <div className="modal-footer">
+                  <button
+                    type="button"
+                    className="modal-btn secondary"
+                    onClick={() => setShowAddForm(false)}
+                  >
+                    Hủy
+                  </button>
+                  <button type="submit" className="modal-btn primary">
+                    Lưu sản phẩm
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
 
         {/* STATS CARDS */}
         <div className="product-stats-grid">
@@ -275,17 +458,15 @@ export function ProductManagement() {
 
           <div className="product-view-toggle">
             <button
-              className={`product-view-btn ${
-                viewMode === "grid" ? "active" : ""
-              }`}
+              className={`product-view-btn ${viewMode === "grid" ? "active" : ""
+                }`}
               onClick={() => setViewMode("grid")}
             >
               <Grid3x3 />
             </button>
             <button
-              className={`product-view-btn ${
-                viewMode === "list" ? "active" : ""
-              }`}
+              className={`product-view-btn ${viewMode === "list" ? "active" : ""
+                }`}
               onClick={() => setViewMode("list")}
             >
               <List />
@@ -320,3 +501,7 @@ export function ProductManagement() {
     </div>
   );
 }
+
+
+
+

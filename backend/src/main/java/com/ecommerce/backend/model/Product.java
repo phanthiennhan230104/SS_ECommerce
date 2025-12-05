@@ -31,8 +31,9 @@ public class Product {
 
     private Integer stock;
 
-    @Column(name = "image_url")
-    private String imageUrl;
+    @Column(name = "image_url", columnDefinition = "TEXT")
+private String imageUrl;
+
 
     @Enumerated(EnumType.STRING)
     private Status status;
