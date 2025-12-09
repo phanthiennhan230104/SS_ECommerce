@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import LoginPage from "./pages/auth/LoginPage";
 import RegisterPage from "./pages/auth/RegisterPage";
 import HomePage from "./pages/home/HomePage";
+import OrderManagementPage from "./pages/order/OrderManagementPage";
 import AdminFlashSalePage from "./pages/admin/AdminFlashSalePage.jsx";
 import AdminUsersPage from "./pages/admin/AdminUsersPage.jsx";
 import AdminProductsPage from "./pages/admin/AdminProductsPage.jsx";
@@ -17,6 +18,9 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/home" element={<HomePage />} />
+
+        <Route path="/orders" element={<OrderManagementPage />} />
+        
         <Route path="*" element={<Navigate to="/login" />} />
          {/* ADMIN: KHÔNG Header/Footer shop */}
         <Route path="/admin-user" element={<AdminUsersPage />} />

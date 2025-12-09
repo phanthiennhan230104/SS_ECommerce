@@ -6,7 +6,7 @@ spring:
     name: ecommerce-backend
 
   datasource:
-    url: jdbc:mysql://localhost:3310/ecommerce?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+    url: jdbc:mysql://localhost:3306/ecommerce?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
     username: root
     password: root
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -42,4 +42,4 @@ spring:
             enable: true
 
 server:
-  port: 8081
+  port: 8080

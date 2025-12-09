@@ -1,11 +1,26 @@
 import axiosClient from "./axiosClient";
 
 const authAPI = {
-  login: (email, password) => {
-    return axiosClient.post("/auth/login", {
+  login: async (email, password) => {
+    const res = await axiosClient.post("/auth/login", {
       email,
       password,
     });
+
+    const token = res.data.token; // backend trả về token ở field nào?
+
+    if (token) {
+      localStorage.setItem("token", token);
+      axiosClient.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+    }
+
+    return res;
+  },
+
+  logout: () => {
+    localStorage.removeItem("token");
+    delete axiosClient.defaults.headers.common["Authorization"];
+    return Promise.resolve();
   },
 };
 
