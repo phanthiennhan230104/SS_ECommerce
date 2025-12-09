@@ -7,8 +7,7 @@ const Footer = () => {
       <div className="container footer__content">
         <div className="footer__col">
           <div className="footer__logo">
-            <span className="footer__logo-icon">⚡</span>
-            <span>FlashMart</span>
+            <span>SS E-commerce Platform</span>
           </div>
           <p className="footer__text">
             Hệ sinh thái mua sắm trực tuyến hàng đầu dành riêng cho những
@@ -46,8 +45,8 @@ const Footer = () => {
 
       <div className="footer__bottom">
         <div className="container footer__bottom-content">
-          <span>© {new Date().getFullYear()} FlashMart. All rights reserved.</span>
-          <span>Made with ❤️ for Architecture Project</span>
+          <span>© {new Date().getFullYear()} SS_Ecommerce. All rights reserved.</span>
+          <span>Made for Architecture Project</span>
         </div>
       </div>
     </footer>

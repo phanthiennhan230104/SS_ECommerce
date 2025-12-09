@@ -6,6 +6,7 @@ import RegisterPage from "./pages/auth/RegisterPage";
 import HomePage from "./pages/home/HomePage";
 import ProtectedRoute from "./components/routes/ProtectedRoute";
 
+import OrderManagementPage from "./pages/order/OrderManagementPage";
 import AdminFlashSalePage from "./pages/admin/AdminFlashSalePage.jsx";
 import AdminUsersPage from "./pages/admin/AdminUsersPage.jsx";
 import AdminProductsPage from "./pages/admin/AdminProductsPage.jsx";
@@ -52,6 +53,17 @@ function App() {
           }
         />
         <Route path="*" element={<Navigate to="/login" replace />} />
+        <Route path="/home" element={<HomePage />} />
+
+        <Route path="/orders" element={<OrderManagementPage />} />
+        
+        <Route path="*" element={<Navigate to="/login" />} />
+         {/* ADMIN: KHÔNG Header/Footer shop */}
+        <Route path="/admin-user" element={<AdminUsersPage />} />
+        <Route path="/admin-product" element={<AdminProductsPage />} />
+        <Route path="/admin-flash-sale" element={<AdminFlashSalePage />} />
+        {/* Sai URL → quay về home */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
   );

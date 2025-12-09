@@ -1,0 +1,351 @@
+/* ============================= */
+/*      LAYOUT CHUNG             */
+/* ============================= */
+
+.order-page {
+    min-height: 100vh;
+    background: linear-gradient(to bottom right, #f8fafc, #eef6ff);
+    padding: 20px;
+    font-family: "Inter", sans-serif;
+}
+
+/* ============================= */
+/*      ORDER CARD               */
+/* ============================= */
+
+.order-card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 20px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+    transition: 0.25s ease;
+}
+
+.order-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+/* ============================= */
+/*      ORDER CARD HEADER        */
+/* ============================= */
+
+.order-card__header {
+    padding-bottom: 16px;
+    border-bottom: 1px solid #ebedf0;
+    margin-bottom: 12px;
+}
+
+.order-card__header-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.order-card__icon-box {
+    width: 40px;
+    height: 40px;
+    background: #3b82f6;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.order-card__meta {
+    display: flex;
+    flex-direction: column;
+}
+
+.order-card__code {
+    font-weight: 600;
+    color: #1e293b;
+    font-size: 16px;
+}
+
+.order-card__date {
+    color: #6b7280;
+    font-size: 13px;
+}
+
+.order-card__header-main {
+    margin-top: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.order-card__customer-label {
+    color: #64748b;
+    font-size: 13px;
+    margin-bottom: 2px;
+}
+
+.order-card__customer-name {
+    font-weight: 600;
+    font-size: 16px;
+    color: #1e293b;
+}
+
+.order-card__customer-email {
+    font-size: 14px;
+    color: #475569;
+    margin-top: 3px;
+}
+
+.order-card__total-label {
+    font-size: 13px;
+    color: #6b7280;
+}
+
+.order-card__total-value {
+    font-size: 18px;
+    font-weight: 700;
+    color: #0f172a;
+    margin-top: 4px;
+}
+
+/* ============================= */
+/*      ORDER BODY               */
+/* ============================= */
+
+.order-card__toggle {
+    width: 100%;
+    background: #f1f5f9;
+    color: #1e293b;
+    border: none;
+    padding: 10px 12px;
+    font-size: 14px;
+    border-radius: 10px;
+    display: flex;
+    justify-content: space-between;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: 0.2s;
+}
+
+.order-card__toggle:hover {
+    background: #e2e8f0;
+}
+
+.order-card__details {
+    margin-top: 16px;
+    animation: fadeIn 0.25s ease-out;
+}
+
+.order-card__section-title {
+    font-weight: 600;
+    color: #1e293b;
+    margin-bottom: 8px;
+}
+
+/* Shipping address */
+.order-card__address {
+    margin-bottom: 18px;
+}
+
+.order-card__address-text {
+    background: #f8fafc;
+    padding: 10px;
+    border-radius: 8px;
+    color: #475569;
+}
+
+/* Items */
+.order-card__items {
+    background: #f8fafc;
+    padding: 12px;
+    border-radius: 10px;
+}
+
+.order-card__item {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.order-card__item:last-child {
+    border-bottom: none;
+}
+
+.order-card__item-name {
+    font-weight: 500;
+    color: #0f172a;
+}
+
+.order-card__item-qty {
+    font-size: 13px;
+    color: #64748b;
+}
+
+.order-card__item-price {
+    font-weight: 600;
+    color: #1e293b;
+}
+
+/* ============================= */
+/*      ACTION BUTTONS           */
+/* ============================= */
+
+.order-card__actions {
+    margin-top: 18px;
+    display: flex;
+    gap: 10px;
+}
+
+.order-btn {
+    flex: 1;
+    padding: 10px;
+    border-radius: 10px;
+    font-weight: 600;
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    cursor: pointer;
+    transition: 0.2s;
+    font-size: 14px;
+}
+
+.order-btn--primary {
+    background: #2563eb;
+    color: white;
+}
+
+.order-btn--primary:hover {
+    background: #1d4ed8;
+}
+
+.order-btn--purple {
+    background: #a855f7;
+    color: white;
+}
+
+.order-btn--purple:hover {
+    background: #9333ea;
+}
+
+.order-btn--green {
+    background: #22c55e;
+    color: white;
+}
+
+.order-btn--green:hover {
+    background: #16a34a;
+}
+
+.order-card__done {
+    padding: 10px 14px;
+    background: #e5e7eb;
+    color: #374151;
+    border-radius: 10px;
+    width: 100%;
+    text-align: center;
+    font-weight: 600;
+}
+
+/* ============================= */
+/*      STATUS BADGE             */
+/* ============================= */
+
+.order-status {
+    padding: 5px 10px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.order-status--pending {
+    background: #fef3c7;
+    color: #b45309;
+}
+
+.order-status--confirmed {
+    background: #e0f2fe;
+    color: #0369a1;
+}
+
+.order-status--shipping {
+    background: #ede9fe;
+    color: #6d28d9;
+}
+
+.order-status--delivered {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.order-status--cancelled {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+/* ============================= */
+/*      FILTER BAR               */
+/* ============================= */
+
+.order-filter {
+    display: flex;
+    gap: 12px;
+    margin: 20px 0;
+}
+
+.order-filter input {
+    flex: 1;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid #cbd5e1;
+}
+
+.order-filter select {
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid #cbd5e1;
+}
+
+/* ============================= */
+/*      ORDER STATS              */
+/* ============================= */
+
+.order-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 14px;
+    margin-bottom: 20px;
+}
+
+.order-stat-box {
+    background: white;
+    padding: 16px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+}
+
+.order-stat-box .label {
+    color: #6b7280;
+    font-size: 13px;
+}
+
+.order-stat-box .value {
+    font-weight: 700;
+    font-size: 20px;
+    margin-top: 4px;
+}
+
+/* ============================= */
+/*      ANIMATION                */
+/* ============================= */
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-6px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
