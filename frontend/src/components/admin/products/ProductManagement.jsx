@@ -91,7 +91,7 @@ export function ProductManagement() {
   });
 
   // TODO: chỉnh baseURL nếu bạn dùng port khác
-  const API_BASE = "http://localhost:8081/api/admin/products";
+  const API_BASE = "http://localhost:8080/api/admin/products";
 
   // gọi API lấy sản phẩm khi load trang
   useEffect(() => {
