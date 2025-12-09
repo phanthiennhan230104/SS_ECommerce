@@ -38,9 +38,17 @@ export default function LoginPage() {
 
       const response = await authAPI.login(email, password);
 
+      // Lưu token + role
       localStorage.setItem("token", response.data.token);
+      localStorage.setItem("role", response.data.role);
 
-      window.location.href = "/home";
+      // Điều hướng theo vai trò
+      if (response.data.role === "ADMIN") {
+        window.location.href = "/admin-user";
+      } else {
+        window.location.href = "/home";
+      }
+
 
     } catch (err) {
       setErrors({
@@ -51,6 +59,7 @@ export default function LoginPage() {
       setIsLoading(false);
     }
   };
+
 
   return (
     <div className="login-container">
