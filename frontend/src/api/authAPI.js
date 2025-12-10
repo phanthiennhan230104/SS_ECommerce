@@ -1,15 +1,13 @@
-import axios from "axios";
-
-const API_URL = "http://localhost:8080/api/auth";
+import axiosClient from "./axiosClient";
 
 const authAPI = {
-  login: (email, password) => {
-    return axios.post(`${API_URL}/login`, {
+  login: async (email, password) => {
+    const res = await axiosClient.post("/auth/login", {
       email,
-      password
+      password,
     });
 
-    const token = res.data.token; // backend trả về token ở field nào?
+    const token = res.data?.token;
 
     if (token) {
       localStorage.setItem("token", token);
