@@ -1,5 +1,5 @@
 /* -------------------------------------------------
-   GLOBAL LOGIN PAGE STYLES (Optimized 2025 Version)
+   GLOBAL LOGIN PAGE STYLES (Shopee Theme 2025)
 -------------------------------------------------- */
 
 /* Page Container */
@@ -8,7 +8,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #9333ea 0%, #ec4899 50%, #ef4444 100%);
+  background: linear-gradient(135deg, #ff6b00 0%, #ff3b3b 55%, #b91c1c 100%);
   padding: 2rem;
   position: relative;
   overflow: hidden;
@@ -35,7 +35,7 @@
   left: 4rem;
   width: 18rem;
   height: 18rem;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.12);
 }
 
 .bg-blob-2 {
@@ -43,7 +43,7 @@
   right: 4rem;
   width: 22rem;
   height: 22rem;
-  background: rgba(253, 224, 71, 0.14);
+  background: rgba(255, 107, 0, 0.25);
   animation-delay: 1s;
 }
 
@@ -66,7 +66,7 @@
   top: -1.8rem;
   left: 50%;
   transform: translateX(-50%);
-  background: #facc15;
+  background: #fff7ed; 
   color: #b91c1c;
   padding: 0.5rem 1.6rem;
   border-radius: 999px;
@@ -103,7 +103,7 @@
   width: 64px;
   height: 64px;
   border-radius: 50%;
-  background: linear-gradient(135deg,#9333ea,#ec4899);
+  background: linear-gradient(135deg,#ff6b00,#ff3b3b);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -148,7 +148,7 @@
   top: 50%;
   left: 0.9rem;
   transform: translateY(-50%);
-  color: #9ca3af;
+  color: #ff6b00;
 }
 
 /* actual input */
@@ -160,13 +160,12 @@
   font-size: 0.9rem;
   color: #374151;
   background: #fff;
-  box-sizing: border-box;
   transition: all .2s ease;
 }
 
 .form-input:focus {
-  border-color: #9333ea;
-  box-shadow: 0 0 0 2px rgba(147, 51, 234, 0.3);
+  border-color: #ff6b00;
+  box-shadow: 0 0 0 2px rgba(255, 107, 0, 0.35);
   outline: none;
 }
 
@@ -183,7 +182,7 @@
   background: none;
   border: none;
   cursor: pointer;
-  color: #9ca3af;
+  color: #ff6b00;
 }
 
 .form-input.with-toggle {
@@ -208,7 +207,7 @@
   padding: 0.85rem;
   border: none;
   border-radius: 0.6rem;
-  background: linear-gradient(90deg,#9333ea,#ec4899);
+  background: linear-gradient(90deg,#ff6b00,#ff3b3b);
   color: white;
   font-weight: 600;
   cursor: pointer;
@@ -220,7 +219,7 @@
 }
 
 .login-button:hover {
-  background: linear-gradient(90deg,#7e22ce,#db2777);
+  background: linear-gradient(90deg,#ff5200,#e11d48);
 }
 
 .login-button:disabled {
@@ -254,13 +253,13 @@
 .signup-button {
   background: none;
   border: none;
-  color: #9333ea;
+  color: #ff6b00;
   font-weight: 600;
   cursor: pointer;
 }
 
 .signup-button:hover {
-  color: #7e22ce;
+  color: #ff3b3b;
 }
 
 /* -------------------------
@@ -295,9 +294,9 @@
   margin-left: -5px;
 }
 
-.user-avatar-1 { background: linear-gradient(135deg,#60a5fa,#3b82f6);}
-.user-avatar-2 { background: linear-gradient(135deg,#4ade80,#16a34a);}
-.user-avatar-3 { background: linear-gradient(135deg,#a78bfa,#7c3aed);}
+.user-avatar-1 { background: linear-gradient(135deg,#ffbb00,#ff9900);}
+.user-avatar-2 { background: linear-gradient(135deg,#ff6b00,#ff3b3b);}
+.user-avatar-3 { background: linear-gradient(135deg,#ffa447,#ff6b00);}
 
 .live-users-text {
   font-size: .85rem;
@@ -306,7 +305,7 @@
 }
 
 .live-users-count {
-  color: #9333ea;
+  color: #ff6b00;
   font-weight: 700;
 }
 
