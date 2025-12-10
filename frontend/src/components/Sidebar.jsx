@@ -1,6 +1,6 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { LayoutDashboard, Users, Package, Zap, LogOut } from "lucide-react";
+import { LayoutDashboard, Users, Package, Zap, LogOut, ShoppingCart } from "lucide-react";
 
 
 
@@ -60,6 +60,19 @@ export function Sidebar({ activePage }) {
               <span>Flash Sale</span>
             </Link>
           </li>
+
+          <li>
+            <Link
+              to="/admin-orders"
+              className={`sidebar-button ${
+                activePage === "orders" ? "active" : ""
+              }`}
+            >
+              <ShoppingCart />
+              <span>Quản lý Đơn Hàng</span>
+            </Link>
+          </li>
+
           <li>
           <button
             type="button"

@@ -12,6 +12,7 @@ import AdminUsersPage from "./pages/admin/AdminUsersPage.jsx";
 import AdminProductsPage from "./pages/admin/AdminProductsPage.jsx";
 import CartPage from "./pages/cart/CartPage";
 import CategoryPage from "./pages/category/CategoryPage";
+import AdminOrdersPage from "./pages/admin/AdminOrdersPage.jsx";
 
 
 function App() {
@@ -67,6 +68,7 @@ function App() {
         <Route path="/admin-user" element={<AdminUsersPage />} />
         <Route path="/admin-product" element={<AdminProductsPage />} />
         <Route path="/admin-flash-sale" element={<AdminFlashSalePage />} />
+        <Route path="/admin-orders" element={<AdminOrdersPage />} />
         {/* Sai URL → quay về home */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

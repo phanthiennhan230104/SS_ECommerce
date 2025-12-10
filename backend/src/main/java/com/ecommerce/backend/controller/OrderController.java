@@ -58,4 +58,42 @@ public class OrderController {
 
         return ResponseEntity.ok("Updated");
     }
+    @PatchMapping("/{id}/confirm-shipped")
+    public ResponseEntity<String> confirmShipped(
+            @PathVariable Long id,
+            Principal principal
+    ) {
+        if (principal == null) {
+            throw new RuntimeException("Missing Token");
+        }
+
+        String email = principal.getName();
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // PAID -> SHIPPED
+        orderService.confirmShippedByUser(id, user.getId());
+
+        return ResponseEntity.ok("Order marked as SHIPPED");
+    }
+
+    @PatchMapping("/{id}/confirm-received")
+    public ResponseEntity<String> confirmReceived(
+            @PathVariable Long id,
+            Principal principal
+    ) {
+        if (principal == null) {
+            throw new RuntimeException("Missing Token");
+        }
+
+        String email = principal.getName();
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // SHIPPED -> COMPLETED
+        orderService.confirmDeliveredByUser(id, user.getId());
+
+        return ResponseEntity.ok("Order marked as COMPLETED");
+    }
+
 }
