@@ -8,18 +8,18 @@ const OrderStatusBadge = ({ status }) => {
       icon: Clock,
       className: "order-status--pending",
     },
-    confirmed: {
-      label: "Đã xác nhận",
+    paid: {
+      label: "Đã thanh toán",
       icon: CheckCircle,
-      className: "order-status--confirmed",
+      className: "order-status--paid",
     },
-    shipping: {
-      label: "Đang giao hàng",
+    shipped: {
+      label: "Đang vận chuyển",
       icon: Truck,
       className: "order-status--shipping",
     },
-    delivered: {
-      label: "Đã giao hàng",
+    completed: {
+      label: "Hoàn thành",
       icon: Package,
       className: "order-status--delivered",
     },
@@ -29,6 +29,7 @@ const OrderStatusBadge = ({ status }) => {
       className: "order-status--cancelled",
     },
   };
+
 
   const config = configMap[status] || configMap.pending;
   const Icon = config.icon;

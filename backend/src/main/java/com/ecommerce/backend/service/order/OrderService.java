@@ -7,6 +7,7 @@ import com.ecommerce.backend.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -33,7 +34,7 @@ public class OrderService {
             order.setStatus(status);
             order.setUpdatedAt(LocalDateTime.now());
 
-            if (status == Order.Status.CONFIRMED) {
+            if (status == Order.Status.PAID) {
                 order.setConfirmedAt(LocalDateTime.now());
             }
 
@@ -42,4 +43,77 @@ public class OrderService {
             throw new RuntimeException("Invalid status: " + newStatus);
         }
     }
+    
+    // Admin xem tất cả đơn, mới nhất trước
+    public List<OrderResponse> getAllOrdersForAdmin() {
+    List<Order> orders = orderRepository.findAllByOrderByCreatedAtDesc();
+    return orders.stream()
+            .map(orderMapper::toResponse)  // dùng lại mapper giống bên user
+            .toList();
+}
+
+
+public void confirmOrderAsAdmin(Long orderId) {
+    Order order = orderRepository.findById(orderId)
+            .orElseThrow(() -> new RuntimeException("Order not found"));
+
+    // Chỉ cho phép xác nhận đơn đang chờ
+    if (order.getStatus() != Order.Status.PENDING) {
+        throw new RuntimeException("Chỉ có thể xác nhận đơn đang chờ (PENDING)");
+    }
+
+    order.setStatus(Order.Status.SHIPPED);   // Chuyển trực tiếp sang SHIPPED
+    order.setConfirmedAt(LocalDateTime.now());
+    order.setUpdatedAt(LocalDateTime.now());
+
+    orderRepository.save(order);
+}
+
+// User xác nhận vận chuyển: PAID -> SHIPPED
+public void confirmShippedByUser(Long orderId, Long userId) {
+    Order order = orderRepository.findByIdAndUserId(orderId, userId)
+            .orElseThrow(() -> new RuntimeException("Order not found"));
+
+    if (order.getStatus() != Order.Status.PAID) {
+        throw new RuntimeException("Chỉ xác nhận được đơn đã thanh toán (PAID)");
+    }
+
+    order.setStatus(Order.Status.SHIPPED);
+    order.setUpdatedAt(LocalDateTime.now());
+
+    orderRepository.save(order);
+}
+
+/**
+ * User xác nhận đã nhận hàng: SHIPPED -> COMPLETED
+ */
+public void confirmDeliveredByUser(Long orderId, Long userId) {
+    Order order = orderRepository.findByIdAndUserId(orderId, userId)
+            .orElseThrow(() -> new RuntimeException("Order not found"));
+
+    if (order.getStatus() != Order.Status.SHIPPED) {
+        throw new RuntimeException("Chỉ xác nhận được đơn đang vận chuyển (SHIPPED)");
+    }
+
+    order.setStatus(Order.Status.COMPLETED);     // Hoàn thành
+    order.setUpdatedAt(LocalDateTime.now());
+
+    orderRepository.save(order);
+}
+
+// Admin hủy đơn: Any status -> CANCELLED
+public void cancelOrder(Long orderId) {
+    Order order = orderRepository.findById(orderId)
+            .orElseThrow(() -> new RuntimeException("Order not found"));
+
+    if (order.getStatus() == Order.Status.CANCELLED) {
+        throw new RuntimeException("Đơn hàng đã bị hủy rồi");
+    }
+
+    order.setStatus(Order.Status.CANCELLED);
+    order.setUpdatedAt(LocalDateTime.now());
+
+    orderRepository.save(order);
+}
+
 }

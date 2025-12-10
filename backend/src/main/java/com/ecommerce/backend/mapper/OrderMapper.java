@@ -52,9 +52,9 @@ public class OrderMapper {
     private String mapStatus(Order.Status status) {
         return switch (status) {
             case PENDING -> "pending";
-            case CONFIRMED -> "confirmed";
-            case SHIPPING -> "shipping";
-            case DELIVERED -> "delivered";
+            case PAID -> "paid";
+            case SHIPPED -> "shipped";
+            case COMPLETED -> "completed";
             case CANCELLED -> "cancelled";
         };
     }
