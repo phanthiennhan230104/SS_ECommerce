@@ -20,6 +20,29 @@ const HeaderMain = () => {
     navigate("/login");
   };
 
+  const [cartCount, setCartCount] = useState(0);
+
+  useEffect(() => {
+    const fetchCartCount = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) return;
+
+      try {
+        const response = await cartAPI.getCart();
+        const totalItems = response.data?.items?.reduce((sum, item) => sum + item.quantity, 0) || 0;
+        setCartCount(totalItems);
+      } catch (error) {
+        console.error("Lỗi khi tải giỏ hàng:", error);
+      }
+    };
+
+    fetchCartCount();
+    
+    // Cập nhật mỗi khi có thay đổi
+    window.addEventListener('cartUpdated', fetchCartCount);
+    return () => window.removeEventListener('cartUpdated', fetchCartCount);
+  }, []);
+
   return (
     <div className="header-main">
       <div className="container header-main__content">
@@ -59,7 +82,7 @@ const HeaderMain = () => {
           >
             <span className="header-cart__icon">🛒</span>
             <span>Giỏ hàng</span>
-            <span className="header-cart__badge">2</span>
+            {cartCount > 0 && <span className="header-cart__badge">{cartCount}</span>}
           </button>
 
           {isLoggedIn ? (

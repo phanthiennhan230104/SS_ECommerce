@@ -1,8 +1,11 @@
 // src/components/sections/FeaturedCategories.jsx
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { featuredCategories } from "../../utils/mockData";
 
 const FeaturedCategories = () => {
+  const navigate = useNavigate();
+
   return (
     <section className="section section--light">
       <div className="container">
@@ -18,6 +21,7 @@ const FeaturedCategories = () => {
               className="category-card"
               key={cat.id}
               style={{ backgroundColor: cat.color }}
+              onClick={() => navigate(`/category/${cat.key}`)} 
             >
               <div className="category-card__icon">{cat.icon}</div>
               <div className="category-card__label">{cat.label}</div>

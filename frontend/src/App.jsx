@@ -10,6 +10,9 @@ import OrderManagementPage from "./pages/order/OrderManagementPage";
 import AdminFlashSalePage from "./pages/admin/AdminFlashSalePage.jsx";
 import AdminUsersPage from "./pages/admin/AdminUsersPage.jsx";
 import AdminProductsPage from "./pages/admin/AdminProductsPage.jsx";
+import CartPage from "./pages/cart/CartPage";
+import CategoryPage from "./pages/category/CategoryPage";
+
 
 function App() {
   return (
@@ -57,6 +60,8 @@ function App() {
 
         <Route path="/orders" element={<OrderManagementPage />} />
         
+        <Route path="/cart" element={<CartPage />} />
+        <Route path="/category/:category" element={<CategoryPage />} />
         <Route path="*" element={<Navigate to="/login" />} />
          {/* ADMIN: KHÔNG Header/Footer shop */}
         <Route path="/admin-user" element={<AdminUsersPage />} />

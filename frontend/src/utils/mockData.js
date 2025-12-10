@@ -39,10 +39,10 @@ export const flashSaleProducts = [
 ];
 
 export const featuredCategories = [
-  { id: 1, label: "Laptop", icon: "💻", color: "#e3f2ff" },
-  { id: 2, label: "Điện thoại", icon: "📱", color: "#e9f7ff" },
-  { id: 3, label: "Âm thanh", icon: "🎧", color: "#f5edff" },
-  { id: 4, label: "Phụ kiện", icon: "🎮", color: "#fff4ed" },
+  { id: 1, key: "laptop", label: "Laptop", icon: "💻", color: "#E0F2FF" },
+  { id: 2, key: "phone", label: "Điện thoại", icon: "📱", color: "#FFF1E6" },
+  { id: 3, key: "audio", label: "Âm thanh", icon: "🎧", color: "#F3E8FF" },
+  { id: 4, key: "accessory", label: "Phụ kiện", icon: "🎮", color: "#FFE4EC" },
 ];
 
 export const featuredProducts = [
