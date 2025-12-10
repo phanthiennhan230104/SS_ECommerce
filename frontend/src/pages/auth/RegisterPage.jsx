@@ -9,7 +9,6 @@ import RegisterHeader from "../../components/auth/RegisterHeader";
 import LiveUsersIndicator from "../../components/auth/LiveUsersIndicator";
 import FormInput from "../../components/inputs/FormInput";
 import RegisterButton from "../../components/buttons/RegisterButton";
-import PasswordStrengthIndicator from "../../components/auth/PasswordStrengthIndicator";
 
 import { Link } from "react-router-dom";
 
@@ -46,9 +45,9 @@ export default function RegisterPage() {
   const update = (field) => (e) =>
     setFormData({ ...formData, [field]: e.target.value });
 
-  // -------------------------------------------
-  // HANDLE SEND OTP
-  // -------------------------------------------
+  // ==========================
+  // SEND OTP
+  // ==========================
   const handleRegister = async () => {
     const newErrors = {};
 
@@ -63,13 +62,11 @@ export default function RegisterPage() {
 
     if (!agreeTerms) newErrors.terms = "You must agree to the terms.";
 
-    // Remove empty errors
     Object.keys(newErrors).forEach(
       (key) => !newErrors[key] && delete newErrors[key]
     );
 
     setErrors(newErrors);
-
     if (Object.keys(newErrors).length > 0) return;
 
     try {
@@ -83,18 +80,22 @@ export default function RegisterPage() {
       });
 
       setOtpStep(true);
-      setIsLoading(false);
       alert("OTP has been sent to your email!");
-
     } catch (err) {
+      const msg =
+        err.response?.data?.error ||
+        err.response?.data?.message ||
+        "Failed to send OTP";
+
+      alert(msg);
+    } finally {
       setIsLoading(false);
-      alert(err.response?.data || "Failed to send OTP");
     }
   };
 
-  // -------------------------------------------
-  // HANDLE VERIFY OTP
-  // -------------------------------------------
+  // ==========================
+  // VERIFY OTP
+  // ==========================
   const handleVerifyOtp = async () => {
     if (!otp) {
       setOtpError("Please enter the OTP.");
@@ -114,10 +115,15 @@ export default function RegisterPage() {
 
       alert("Registration successful!");
       window.location.href = "/login";
-
     } catch (err) {
+      const msg =
+        err.response?.data?.error ||
+        err.response?.data?.message ||
+        "Invalid OTP, please try again.";
+
+      setOtpError(msg);
+    } finally {
       setIsLoading(false);
-      setOtpError("Invalid OTP, please try again.");
     }
   };
 
@@ -131,7 +137,6 @@ export default function RegisterPage() {
         <div className="register-card">
           <RegisterHeader />
 
-          {/* ============ OTP STEP ============ */}
           {otpStep ? (
             <>
               <label className="form-label">Enter OTP</label>
@@ -163,8 +168,6 @@ export default function RegisterPage() {
             </>
           ) : (
             <>
-              {/* ============ REGISTER FORM ============ */}
-
               <label className="form-label">Full Name</label>
               <FormInput
                 type="text"
