@@ -29,7 +29,4 @@ public class OrderItem {
 
     @Column(name = "unit_price")
     private BigDecimal unitPrice;
-
-    @Column(name = "line_total", insertable = false, updatable = false)
-    private BigDecimal lineTotal;
 }

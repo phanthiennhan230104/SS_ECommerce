@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import cartAPI from "../../api/cartAPI";
 import Header from "../../components/layout/Header";
 import Footer from "../../components/layout/Footer";
+import CheckoutModal from "../../components/CheckoutModal";
 import "../../styles/CartPage.css";
 import "../../styles/global.css";
 
@@ -11,6 +12,8 @@ export default function CartPage() {
   const navigate = useNavigate();
   const [cart, setCart] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [showCheckoutModal, setShowCheckoutModal] = useState(false);
+  const [isCheckingOut, setIsCheckingOut] = useState(false);
 
   const fetchCart = () => {
     const token = localStorage.getItem("token");
@@ -69,6 +72,53 @@ export default function CartPage() {
       console.error("❌ Lỗi khi xóa:", error);
       console.error("❌ Response:", error.response);
       alert(`❌ Không thể xóa sản phẩm! ${error.response?.data?.message || error.message}`);
+    }
+  };
+
+  const handleCheckoutClick = () => {
+    if (!cart || cart.items.length === 0) {
+      alert("❌ Giỏ hàng trống! Vui lòng thêm sản phẩm.");
+      return;
+    }
+    setShowCheckoutModal(true);
+  };
+
+  const handleCheckoutSubmit = async (formData) => {
+    setIsCheckingOut(true);
+    try {
+      // Prepare order data from cart
+      const orderData = {
+        items: cart.items.map(item => ({
+          productId: item.product.id,
+          quantity: item.quantity,
+          unitPrice: item.unitPrice
+        })),
+        totalAmount: cart.totalAmount,
+        customerName: formData.customerName,
+        customerEmail: formData.customerEmail,
+        customerAddress: formData.customerAddress,
+        customerPhone: formData.customerPhone
+      };
+
+      console.log("📦 Dữ liệu checkout:", orderData);
+
+      // Call checkout API
+      const response = await cartAPI.checkout(orderData);
+      
+      if (response.data) {
+        alert("✅ Đặt hàng thành công!");
+        setShowCheckoutModal(false);
+        // Refresh cart
+        fetchCart();
+        // Redirect to orders page
+        navigate("/orders");
+      }
+    } catch (error) {
+      console.error("❌ Lỗi khi đặt hàng:", error);
+      const errorMsg = error.response?.data?.message || error.message;
+      alert(`❌ Có lỗi xảy ra! ${errorMsg}`);
+    } finally {
+      setIsCheckingOut(false);
     }
   };
 
@@ -179,7 +229,10 @@ export default function CartPage() {
                     </span>
                   </div>
 
-                  <button className="cart-summary__checkout">
+                  <button 
+                    className="cart-summary__checkout"
+                    onClick={handleCheckoutClick}
+                  >
                     Tiến hành thanh toán
                   </button>
 
@@ -209,6 +262,16 @@ export default function CartPage() {
       </main>
 
       <Footer />
+
+      {/* Checkout Modal */}
+      {showCheckoutModal && (
+        <CheckoutModal
+          cart={cart}
+          onClose={() => !isCheckingOut && setShowCheckoutModal(false)}
+          onSubmit={handleCheckoutSubmit}
+          isLoading={isCheckingOut}
+        />
+      )}
     </div>
   );
 }

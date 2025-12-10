@@ -14,7 +14,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ecommerce.backend.dto.request.cart.AddToCartRequest;
 import com.ecommerce.backend.dto.request.cart.UpdateCartRequest;
+import com.ecommerce.backend.dto.request.order.CheckoutRequest;
+import com.ecommerce.backend.dto.response.order.OrderResponse;
 import com.ecommerce.backend.model.Cart;
+import com.ecommerce.backend.mapper.OrderMapper;
 import com.ecommerce.backend.repository.UserRepository;
 import com.ecommerce.backend.service.cart.CartService;
 import com.ecommerce.backend.util.JwtUtil;
@@ -30,6 +33,7 @@ public class CartController {
     private final CartService cartService;
     private final JwtUtil jwtUtil;
     private final UserRepository userRepository;
+    private final OrderMapper orderMapper;
 
     private Long getUserIdFromToken(String authHeader) {
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
@@ -82,4 +86,35 @@ public class CartController {
         Long userId = getUserIdFromToken(authHeader);
         return ResponseEntity.ok(cartService.removeItem(userId, productId));
     }
+
+    @PostMapping("/checkout")
+    public ResponseEntity<?> checkout(
+            @RequestHeader(value = "Authorization", required = false) String authHeader,
+            @RequestBody CheckoutRequest checkoutRequest
+    ) {
+        try {
+            Long userId = getUserIdFromToken(authHeader);
+            System.out.println("🔵 Checkout request for user: " + userId);
+            System.out.println("📦 Items count: " + (checkoutRequest.getItems() != null ? checkoutRequest.getItems().size() : 0));
+            System.out.println("💰 Total: " + checkoutRequest.getTotalAmount());
+            
+            var order = cartService.checkout(userId, checkoutRequest);
+            OrderResponse response = orderMapper.toResponse(order);
+            
+            System.out.println("✅ Order created: " + order.getId());
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            System.err.println("❌ Checkout error: " + e.getMessage());
+            e.printStackTrace();
+            return ResponseEntity.status(500).body(new ErrorResponse("Checkout error: " + e.getMessage()));
+        }
+    }
+    
+    static class ErrorResponse {
+        public String message;
+        public ErrorResponse(String message) {
+            this.message = message;
+        }
+    }
 }
+

@@ -13,13 +13,7 @@ const OrderCard = ({
   order,
   isExpanded,
   onToggle,
-  onChangeStatus,
-  isUpdating,
 }) => {
-  const handleConfirm = () => onChangeStatus(order.id, "confirmed");
-  const handleShipping = () => onChangeStatus(order.id, "shipping");
-  const handleDelivered = () => onChangeStatus(order.id, "delivered");
-
   return (
     <div className="order-card">
       {/* Header */}
@@ -75,6 +69,14 @@ const OrderCard = ({
               </p>
             </div>
 
+            {/* Số điện thoại */}
+            <div className="order-card__phone">
+              <p className="order-card__section-title">Số điện thoại</p>
+              <p className="order-card__phone-text">
+                {order.customerPhone}
+              </p>
+            </div>
+
             {/* Sản phẩm */}
             <div>
               <p className="order-card__section-title">Sản phẩm</p>
@@ -103,47 +105,32 @@ const OrderCard = ({
           </div>
         )}
 
-        {/* Buttons */}
-        <div className="order-card__actions">
+        {/* Status Info */}
+        <div className="order-card__status-info">
           {order.status === "pending" && (
-            <button
-              type="button"
-              onClick={handleConfirm}
-              disabled={isUpdating}
-              className="order-btn order-btn--primary"
-            >
-              <CheckCircle size={18} />
-              {isUpdating ? "Đang xử lý..." : "Xác nhận đơn"}
-            </button>
+            <p className="order-card__status-message">
+              ⏳ Chờ admin xác nhận đơn hàng
+            </p>
           )}
-
           {order.status === "confirmed" && (
-            <button
-              type="button"
-              onClick={handleShipping}
-              disabled={isUpdating}
-              className="order-btn order-btn--purple"
-            >
-              <Truck size={18} />
-              {isUpdating ? "Đang xử lý..." : "Bắt đầu giao hàng"}
-            </button>
+            <p className="order-card__status-message">
+              ✅ Đơn hàng đã được xác nhận
+            </p>
           )}
-
           {order.status === "shipping" && (
-            <button
-              type="button"
-              onClick={handleDelivered}
-              disabled={isUpdating}
-              className="order-btn order-btn--green"
-            >
-              <Package size={18} />
-              {isUpdating ? "Đang xử lý..." : "Xác nhận đã giao"}
-            </button>
+            <p className="order-card__status-message">
+              🚚 Đơn hàng đang được giao đến bạn
+            </p>
           )}
-
-          {(order.status === "delivered" ||
-            order.status === "cancelled") && (
-            <div className="order-card__done">Đơn hàng đã hoàn thành</div>
+          {order.status === "delivered" && (
+            <p className="order-card__status-message status-delivered">
+              ✓ Đã giao hàng thành công
+            </p>
+          )}
+          {order.status === "cancelled" && (
+            <p className="order-card__status-message status-cancelled">
+              ✗ Đơn hàng đã bị hủy
+            </p>
           )}
         </div>
       </div>
