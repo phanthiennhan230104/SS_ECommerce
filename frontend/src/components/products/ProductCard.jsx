@@ -1,5 +1,7 @@
 // src/components/products/ProductCard.jsx
 import React from "react";
+import { useNavigate } from "react-router-dom";
+import cartAPI from "../../api/cartAPI";
 
 const formatCurrency = (value) =>
   value.toLocaleString("vi-VN", {
