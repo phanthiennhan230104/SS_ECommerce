@@ -17,10 +17,11 @@ public class OrderMapper {
         OrderResponse dto = new OrderResponse();
 
         dto.setId(order.getId());
-        dto.setOrderCode(generateOrderCode(order.getId(), order.getCreatedAt()));
+        dto.setOrderCode(order.getOrderCode());
 
-        dto.setCustomerName(order.getUser().getFullName());
-        dto.setCustomerEmail(order.getUser().getEmail());
+        dto.setCustomerName(order.getCustomerName() != null ? order.getCustomerName() : order.getUser().getFullName());
+        dto.setCustomerEmail(order.getCustomerEmail() != null ? order.getCustomerEmail() : order.getUser().getEmail());
+        dto.setCustomerPhone(order.getCustomerPhone());
         dto.setCustomerAddress(order.getShippingAddress());
 
         dto.setStatus(mapStatus(order.getStatus()));
@@ -41,7 +42,9 @@ public class OrderMapper {
         dto.setProductName(item.getProduct().getName());
         dto.setQuantity(item.getQuantity());
         dto.setUnitPrice(item.getUnitPrice().doubleValue());
-        dto.setLineTotal(item.getLineTotal().doubleValue());
+        // Calculate lineTotal from quantity * unitPrice
+        double lineTotal = item.getUnitPrice().doubleValue() * item.getQuantity();
+        dto.setLineTotal(lineTotal);
         return dto;
     }
 
@@ -49,16 +52,11 @@ public class OrderMapper {
     private String mapStatus(Order.Status status) {
         return switch (status) {
             case PENDING -> "pending";
-            case PAID -> "confirmed";
-            case SHIPPED -> "shipping";
-            case COMPLETED -> "delivered";
+            case CONFIRMED -> "confirmed";
+            case SHIPPING -> "shipping";
+            case DELIVERED -> "delivered";
             case CANCELLED -> "cancelled";
         };
     }
-
-    // Create orderCode (ORD-2025-003)
-    private String generateOrderCode(Long id, LocalDateTime createdAt) {
-        int year = createdAt.getYear();
-        return String.format("ORD-%d-%03d", year, id);
-    }
 }
+

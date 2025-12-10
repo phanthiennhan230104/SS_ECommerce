@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import DarkModeToggle from "./DarkModeToggle";
 import authAPI from "../../api/authAPI";
+import cartAPI from "../../api/cartAPI";
 
 const HeaderMain = () => {
   const navigate = useNavigate();

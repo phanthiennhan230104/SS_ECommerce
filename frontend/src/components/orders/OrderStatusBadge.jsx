@@ -6,27 +6,27 @@ const OrderStatusBadge = ({ status }) => {
     pending: {
       label: "Chờ xác nhận",
       icon: Clock,
-      className: "order-status-pending",
+      className: "order-status--pending",
     },
     confirmed: {
       label: "Đã xác nhận",
       icon: CheckCircle,
-      className: "order-status-confirmed",
+      className: "order-status--confirmed",
     },
     shipping: {
       label: "Đang giao hàng",
       icon: Truck,
-      className: "order-status-shipping",
+      className: "order-status--shipping",
     },
     delivered: {
       label: "Đã giao hàng",
       icon: Package,
-      className: "order-status-delivered",
+      className: "order-status--delivered",
     },
     cancelled: {
       label: "Đã hủy",
       icon: XCircle,
-      className: "order-status-cancelled",
+      className: "order-status--cancelled",
     },
   };
 
@@ -34,7 +34,7 @@ const OrderStatusBadge = ({ status }) => {
   const Icon = config.icon;
 
   return (
-    <span className={`order-status-badge ${config.className}`}>
+    <span className={`order-status ${config.className}`}>
       <Icon size={16} />
       {config.label}
     </span>

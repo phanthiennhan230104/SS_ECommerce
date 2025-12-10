@@ -36,6 +36,7 @@ public class Cart {
     private BigDecimal totalAmount = BigDecimal.ZERO;
 
     @Enumerated(EnumType.STRING)
+    @Column(length = 20)
     private Status status = Status.PENDING;
 
     private LocalDateTime createdAt = LocalDateTime.now();

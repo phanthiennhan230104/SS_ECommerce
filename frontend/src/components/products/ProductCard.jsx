@@ -43,20 +43,32 @@ const flyToCart = (imgEl) => {
 };
 
 const ProductCard = ({ product, flashSale = false, onAddToCart }) => {
-  const { name, price, originalPrice, soldPercent, image, tag } = product;
+  const { name, price, originalPrice, soldPercent, imageUrl, tag } = product;
 
   const imgRef = React.useRef(null);
 
-  const handleClick = () => {
-    if (imgRef.current) {
-      flyToCart(imgRef.current);
-    }
+  const handleClick = async () => {
+    try {
+      // Gọi API thêm vào giỏ
+      await cartAPI.addToCart(product.id, 1);
+      
+      // Trigger animation
+      if (imgRef.current) {
+        flyToCart(imgRef.current);
+      }
 
-    if (onAddToCart) {
-      onAddToCart(product);
-    } else {
-      // tạm thời log cho demo
-      console.log("Added to cart:", product.name);
+      // Dispatch event để cập nhật badge
+      window.dispatchEvent(new Event('cartUpdated'));
+
+      // Callback nếu có
+      if (onAddToCart) {
+        onAddToCart(product);
+      }
+      
+      console.log("Đã thêm vào giỏ:", product.name);
+    } catch (error) {
+      console.error("Lỗi khi thêm vào giỏ:", error);
+      alert("Không thể thêm vào giỏ hàng. Vui lòng đăng nhập!");
     }
   };
 
@@ -68,15 +80,9 @@ const ProductCard = ({ product, flashSale = false, onAddToCart }) => {
       <div className="product-card__image-wrap">
         {tag && <div className="product-card__tag">{tag}</div>}
 
-        {flashSale && (
-          <div className="product-card__flash-badge">
-            ⚡ FLASH SALE
-          </div>
-        )}
-
         <img
           ref={imgRef}
-          src={image}
+          src={imageUrl}
           alt={name}
           className="product-card__image"
         />
@@ -113,7 +119,7 @@ const ProductCard = ({ product, flashSale = false, onAddToCart }) => {
         )}
 
         <button className="product-card__btn" onClick={handleClick}>
-          {flashSale ? "Mua ngay" : "Thêm vào giỏ"}
+          Thêm vào giỏ
         </button>
       </div>
     </div>

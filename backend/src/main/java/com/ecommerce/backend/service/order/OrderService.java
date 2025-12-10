@@ -28,9 +28,18 @@ public class OrderService {
         Order order = orderRepository.findByIdAndUserId(id, userId)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
 
-        order.setStatus(Order.Status.valueOf(newStatus.toUpperCase()));
-        order.setUpdatedAt(LocalDateTime.now());
+        try {
+            Order.Status status = Order.Status.valueOf(newStatus.toUpperCase());
+            order.setStatus(status);
+            order.setUpdatedAt(LocalDateTime.now());
 
-        orderRepository.save(order);
+            if (status == Order.Status.CONFIRMED) {
+                order.setConfirmedAt(LocalDateTime.now());
+            }
+
+            orderRepository.save(order);
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Invalid status: " + newStatus);
+        }
     }
 }

@@ -11,6 +11,9 @@ const cartAPI = {
 
   removeItem: (productId) =>
     axiosClient.delete(`/cart/remove/${productId}`),
+
+  checkout: (orderData) =>
+    axiosClient.post("/cart/checkout", orderData),
 };
 
 export default cartAPI;
