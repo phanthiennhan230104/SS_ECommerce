@@ -1,9 +1,22 @@
-// src/components/admin/Sidebar.jsx
 import React from "react";
-import { Link } from "react-router-dom";
-import { LayoutDashboard, Users, Package, Zap } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { LayoutDashboard, Users, Package, Zap, LogOut } from "lucide-react";
+
+
 
 export function Sidebar({ activePage }) {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    
+    localStorage.removeItem("token");
+    localStorage.removeItem("role");
+
+    
+    window.location.href = "http://localhost:5173/login";
+    
+  };
+
   return (
     <aside className="sidebar">
       <div className="sidebar-header">Admin Panel</div>
@@ -47,6 +60,16 @@ export function Sidebar({ activePage }) {
               <span>Flash Sale</span>
             </Link>
           </li>
+          <li>
+          <button
+            type="button"
+            className="sidebar-button sidebar-logout"
+            onClick={handleLogout}
+          >
+            <LogOut />
+            <span>Đăng xuất</span>
+          </button>
+        </li>
         </ul>
       </nav>
     </aside>
