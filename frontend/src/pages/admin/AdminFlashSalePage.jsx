@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import AdminLayout from "../../components/admin/AdminLayout.jsx";
 import "../../styles/admin/flashsale.css";
 
-const API_BASE = "http://localhost:8081/api/admin";
+const API_BASE = "http://localhost:8080/api/admin";
 
 const AdminFlashSalePage = () => {
   const [products, setProducts] = useState([]);

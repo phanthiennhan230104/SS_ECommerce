@@ -43,9 +43,19 @@ const flyToCart = (imgEl) => {
 };
 
 const ProductCard = ({ product, flashSale = false, onAddToCart }) => {
-  const { name, price, originalPrice, soldPercent, imageUrl, tag } = product;
+  const { name, price, flashPrice, originalPrice, soldPercent, imageUrl, tag } = product;
 
   const imgRef = React.useRef(null);
+
+  // Xác định giá hiển thị dựa trên flashSale
+  const displayPrice = product.flashSale && flashPrice ? flashPrice : price;
+  const originalDisplayPrice = product.flashSale && flashPrice ? price : originalPrice;
+  
+  // Kiểm tra nếu có giá giảm
+  const isDiscounted = 
+    product.flashSale && flashPrice ? 
+      (price && price > flashPrice) : 
+      (typeof originalPrice === "number" && originalPrice > price);
 
   const handleClick = async () => {
     try {
@@ -72,9 +82,6 @@ const ProductCard = ({ product, flashSale = false, onAddToCart }) => {
     }
   };
 
-  const isDiscounted =
-    typeof originalPrice === "number" && originalPrice > price;
-
   return (
     <div className={`product-card ${flashSale ? "product-card--flash" : ""}`}>
       <div className="product-card__image-wrap">
@@ -94,11 +101,11 @@ const ProductCard = ({ product, flashSale = false, onAddToCart }) => {
         <div className="product-card__price-row">
           <div className="product-card__price">
             <span className="product-card__price-current">
-              {formatCurrency(price)}
+              {formatCurrency(displayPrice)}
             </span>
             {isDiscounted && (
               <span className="product-card__price-original">
-                {formatCurrency(originalPrice)}
+                {formatCurrency(originalDisplayPrice)}
               </span>
             )}
           </div>
