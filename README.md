@@ -1,4 +1,3 @@
-📘 README.md Template – Software Architecture Project
 # 🧩 Software Architecture Project
 Group 6 Project
 
