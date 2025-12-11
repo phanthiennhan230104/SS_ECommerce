@@ -1,29 +1,38 @@
-HELP.md
+############################
+# Maven
+############################
 target/
-.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
+!.mvn/wrapper/maven-wrapper.jar
+.mvn/jvm.config
 
+# Do NOT include packaged applications
+*.jar
+*.war
+*.ear
+
+############################
 # Logs
+############################
 *.log
 logs/
+log/
 
-# Java files
+############################
+# Java / JVM Files
+############################
 *.class
+hs_err_pid*
+replay_pid*
 
-# OS files
+############################
+# OS Files
+############################
 .DS_Store
 Thumbs.db
 
-# IDE ###
-## STS (Spring Tool Suite)
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings/
-.springBeans
-.sts4-cache/
+############################
+# IDE Files
+############################
 
 ## IntelliJ IDEA
 .idea/
@@ -31,21 +40,60 @@ Thumbs.db
 *.iml
 *.ipr
 
+## Eclipse / STS
+.apt_generated/
+.classpath
+.factorypath
+.project
+.settings/
+.springBeans
+.sts4-cache/
+
 ## NetBeans
 /nbproject/private/
 /nbbuild/
 /dist/
 /nbdist/
 /.nb-gradle/
-build/
-!**/src/main/**/build/
-!**/src/test/**/build/
 
 ## VS Code
 .vscode/
 
-# Environment files (optional nhưng khuyên dùng)
+############################
+# Build directories
+############################
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+############################
+# Environment & Config (An toàn)
+############################
 .env
+.env.* 
+*.env
 application-local.yml
 application-dev.yml
 application-test.yml
+application-*.properties
+application-*.yml
+
+############################
+# Docker
+############################
+/docker-data/
+/docker/volumes/
+
+############################
+# Other temporary files
+############################
+*.tmp
+*.bak
+*.swp
+*~
+
+############################
+# Node (Nếu có frontend)
+############################
+node_modules/
+dist/
