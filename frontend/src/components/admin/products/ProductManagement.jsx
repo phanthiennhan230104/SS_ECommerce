@@ -11,9 +11,9 @@ import {
 } from "lucide-react";
 
 // Card hiển thị 1 sản phẩm
-function ProductCard({ name, price, stock, image, label, status }) {
+function ProductCard({ product, onEdit, onDelete }) {
   const getStatusText = () => {
-    switch (status) {
+    switch (product.status) {
       case "in-stock":
         return "Còn hàng";
       case "low-stock":
@@ -26,9 +26,9 @@ function ProductCard({ name, price, stock, image, label, status }) {
   };
 
   const statusClass =
-    status === "in-stock"
+    product.status === "in-stock"
       ? "status-in-stock"
-      : status === "low-stock"
+      : product.status === "low-stock"
         ? "status-low-stock"
         : "status-out-of-stock";
 
@@ -37,10 +37,10 @@ function ProductCard({ name, price, stock, image, label, status }) {
       <div className="product-card-media">
         <img
           src={
-            image ||
+            product.image ||
             "https://images.unsplash.com/photo-1585386959984-a4155223f3f8?w=800"
           }
-          alt={name}
+          alt={product.name}
           className="product-card-img"
         />
         <span className={`product-status-pill ${statusClass}`}>
@@ -49,16 +49,20 @@ function ProductCard({ name, price, stock, image, label, status }) {
       </div>
 
       <div className="product-card-body">
-        <p className="product-card-category">{label}</p>
-        <p className="product-card-name">{name}</p>
+        <p className="product-card-category">{`Mã SP #${product.id}`}</p>
+        <p className="product-card-name">{product.name}</p>
         <p className="product-card-price">
-          ₫{Number(price || 0).toLocaleString("vi-VN")}
+          ₫{Number(product.price || 0).toLocaleString("vi-VN")}
         </p>
-        <p className="product-card-stock">{stock} trong kho</p>
+        <p className="product-card-stock">{product.stock} trong kho</p>
 
         <div className="product-card-footer">
-          <button className="product-card-btn edit">Sửa</button>
-          <button className="product-card-btn delete">🗑</button>
+          <button className="product-card-btn edit" onClick={() => onEdit(product)}>
+            Sửa
+          </button>
+          <button className="product-card-btn delete" onClick={() => onDelete(product.id)}>
+            🗑
+          </button>
         </div>
       </div>
     </div>
@@ -79,8 +83,9 @@ export function ProductManagement() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // ✅ state cho form thêm sản phẩm
-  const [showAddForm, setShowAddForm] = useState(false);
+  // ✅ state cho form thêm/sửa sản phẩm
+  const [showForm, setShowForm] = useState(false);
+  const [editingId, setEditingId] = useState(null); // null = thêm mới, có id = sửa
   const [form, setForm] = useState({
     name: "",
     price: "",
@@ -126,7 +131,22 @@ export function ProductManagement() {
       description: "",
       status: "ACTIVE",
     });
-    setShowAddForm(true);
+    setEditingId(null);
+    setShowForm(true);
+  };
+
+  // ✅ mở form sửa
+  const handleOpenEdit = (product) => {
+    setForm({
+      name: product.name,
+      price: product.price,
+      stock: product.stock,
+      imageUrl: product.imageUrl,
+      description: product.description,
+      status: product.status,
+    });
+    setEditingId(product.id);
+    setShowForm(true);
   };
 
   // ✅ handle change form
@@ -135,7 +155,7 @@ export function ProductManagement() {
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  // ✅ submit form -> gọi API POST -> thêm vào state
+  // ✅ submit form -> gọi API POST/PUT -> cập nhật state
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -144,38 +164,88 @@ export function ProductManagement() {
       const token = localStorage.getItem("token");
 
       const payload = {
-  name: form.name,
-  description: form.description,
-  price: Number(form.price),
-  stock: Number(form.stock),
-  imageUrl: form.imageUrl,
-  status: form.status,
-};
+        name: form.name,
+        description: form.description,
+        price: Number(form.price),
+        stock: Number(form.stock),
+        imageUrl: form.imageUrl,
+        status: form.status,
+      };
 
-
-      const res = await fetch(API_BASE, {   // ✅ KHÔNG /create nữa
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
-        body: JSON.stringify(payload),
-      });
-
-
+      let res;
+      if (editingId) {
+        // CẬP NHẬT
+        res = await fetch(`${API_BASE}/${editingId}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+          body: JSON.stringify(payload),
+        });
+      } else {
+        // THÊM MỚI
+        res = await fetch(API_BASE, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+          body: JSON.stringify(payload),
+        });
+      }
 
       if (!res.ok) {
         const msg = await res.text();
-        throw new Error(msg || "Không thêm được sản phẩm");
+        throw new Error(msg || "Không lưu được sản phẩm");
       }
 
-      const created = await res.json();
-      // thêm sản phẩm mới lên đầu list
-      setProducts((prev) => [created, ...prev]);
-      setShowAddForm(false);
+      const updated = await res.json();
+
+      if (editingId) {
+        // cập nhật item trong list
+        setProducts((prev) =>
+          prev.map((p) => (p.id === editingId ? updated : p))
+        );
+      } else {
+        // thêm sản phẩm mới lên đầu list
+        setProducts((prev) => [updated, ...prev]);
+      }
+
+      setShowForm(false);
     } catch (e) {
       console.error(e);
-      setError(e.message || "Không thêm được sản phẩm");
+      setError(e.message || "Không lưu được sản phẩm");
+    }
+  };
+
+  // ✅ xoá sản phẩm
+  const handleDelete = async (productId) => {
+    if (!window.confirm("Bạn có chắc muốn xoá sản phẩm này?")) {
+      return;
+    }
+
+    try {
+      setError("");
+      const token = localStorage.getItem("token");
+
+      const res = await fetch(`${API_BASE}/${productId}`, {
+        method: "DELETE",
+        headers: {
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+      });
+
+      if (!res.ok) {
+        const msg = await res.text();
+        throw new Error(msg || "Không xoá được sản phẩm");
+      }
+
+      // xoá khỏi state
+      setProducts((prev) => prev.filter((p) => p.id !== productId));
+    } catch (e) {
+      console.error(e);
+      setError(e.message || "Không xoá được sản phẩm");
     }
   };
 
@@ -192,18 +262,14 @@ export function ProductManagement() {
     return { totalProducts: total, lowStockCount: low, totalValue: value };
   }, [products]);
 
-  const bestSellers = 156; // demo
-
   // data demo cho mini chart
   const stockChart = [45, 52, 48, 61, 58, 65, 72];
   const lowStockChart = [15, 18, 22, 19, 23, 20, 23];
   const valueChart = [2.1, 2.3, 2.2, 2.5, 2.4, 2.6, 2.8];
-  const bestChart = [120, 135, 142, 138, 145, 152, 156];
 
   const maxStock = Math.max(...stockChart);
   const maxLow = Math.max(...lowStockChart);
   const maxValue = Math.max(...valueChart);
-  const maxBest = Math.max(...bestChart);
 
   const filteredProducts = products.filter((p) =>
     (p.name || "").toLowerCase().includes(searchQuery.toLowerCase())
@@ -231,16 +297,16 @@ export function ProductManagement() {
           </button>
         </div>
 
-        {/* MODAL THÊM SẢN PHẨM – giống Flash Sale */}
-        {showAddForm && (
+        {/* MODAL THÊM/SỬA SẢN PHẨM */}
+        {showForm && (
           <div className="modal-backdrop">
             <div className="modal">
               <div className="modal-header">
-                <h2>Thêm sản phẩm</h2>
+                <h2>{editingId ? "Sửa sản phẩm" : "Thêm sản phẩm"}</h2>
                 <button
                   type="button"
                   className="modal-close"
-                  onClick={() => setShowAddForm(false)}
+                  onClick={() => setShowForm(false)}
                 >
                   ×
                 </button>
@@ -326,12 +392,12 @@ export function ProductManagement() {
                   <button
                     type="button"
                     className="modal-btn secondary"
-                    onClick={() => setShowAddForm(false)}
+                    onClick={() => setShowForm(false)}
                   >
                     Hủy
                   </button>
                   <button type="submit" className="modal-btn primary">
-                    Lưu sản phẩm
+                    {editingId ? "Cập nhật" : "Lưu sản phẩm"}
                   </button>
                 </div>
               </form>
@@ -416,29 +482,6 @@ export function ProductManagement() {
               ))}
             </div>
           </div>
-
-          {/* Bán chạy (demo) */}
-          <div className="product-stat-card">
-            <div className="product-stat-header">
-              <div>
-                <p className="product-stat-title">Bán chạy</p>
-                <p className="product-stat-value">{bestSellers}</p>
-                <p className="product-stat-change positive">Tuần này</p>
-              </div>
-              <div className="product-stat-icon rose">
-                <TrendingUp />
-              </div>
-            </div>
-            <div className="product-stat-chart">
-              {bestChart.map((v, i) => (
-                <div
-                  key={i}
-                  className="product-stat-chart-bar rose"
-                  style={{ height: `${(v / maxBest) * 100}%` }}
-                />
-              ))}
-            </div>
-          </div>
         </div>
 
         {/* TOOLBAR */}
@@ -484,12 +527,16 @@ export function ProductManagement() {
             {filteredProducts.map((p) => (
               <ProductCard
                 key={p.id}
-                name={p.name}
-                price={p.price}
-                stock={p.stock}
-                image={p.imageUrl}
-                label={`Mã SP #${p.id}`}
-                status={mapStatus(p.status, p.stock)}
+                product={{
+                  id: p.id,
+                  name: p.name,
+                  price: p.price,
+                  stock: p.stock,
+                  image: p.imageUrl,
+                  status: mapStatus(p.status, p.stock),
+                }}
+                onEdit={() => handleOpenEdit(p)}
+                onDelete={() => handleDelete(p.id)}
               />
             ))}
             {!filteredProducts.length && (
