@@ -23,7 +23,7 @@ public class Order {
     @Column(name = "order_code", unique = true)
     private String orderCode;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 

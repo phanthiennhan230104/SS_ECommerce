@@ -1,20 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Users, UserCheck, UserCog, Plus } from "lucide-react";
 import { UserTable } from "./UserTable.jsx";
-
-const initialUsers = [
-  { id: 1, name: "Nguyễn Văn A", email: "a@example.com", role: "USER",   status: "Active" },
-  { id: 2, name: "Trần Thị B",   email: "b@example.com", role: "ADMIN",  status: "Active" },
-  { id: 3, name: "Lê Văn C",     email: "c@example.com", role: "SELLER", status: "Blocked" },
-  { id: 4, name: "Phạm Thị D",   email: "d@example.com", role: "USER",   status: "Active" },
-  { id: 5, name: "Hoàng Văn E",  email: "e@example.com", role: "SELLER", status: "Active" },
-  { id: 6, name: "Vũ Thị F",     email: "f@example.com", role: "USER",   status: "Active" },
-  { id: 7, name: "Đặng Văn G",   email: "g@example.com", role: "ADMIN",  status: "Active" },
-  { id: 8, name: "Bùi Thị H",    email: "h@example.com", role: "USER",   status: "Blocked" },
-];
+import axiosClient from "../../../api/axiosClient";
 
 export function UserManagement() {
-  const [users, setUsers] = useState(initialUsers);
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [roleFilter, setRoleFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
@@ -24,14 +16,37 @@ export function UserManagement() {
   const [newUser, setNewUser] = useState({
     name: "",
     email: "",
-    role: "USER",
+    role: "CUSTOMER",
     status: "Active",
   });
+
+  // modal sửa user
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editUser, setEditUser] = useState(null);
+
+  // Fetch users từ database
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  const fetchUsers = async () => {
+    try {
+      setLoading(true);
+      setError("");
+      const res = await axiosClient.get("/admin/users");
+      setUsers(res.data || []);
+    } catch (err) {
+      console.error(err);
+      setError("Không tải được danh sách user");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const totalUsers = users.length;
   const activeUsers = users.filter((u) => u.status === "Active").length;
   const roleDistribution = {
-    USER: users.filter((u) => u.role === "USER").length,
+    CUSTOMER: users.filter((u) => u.role === "CUSTOMER").length,
     SELLER: users.filter((u) => u.role === "SELLER").length,
     ADMIN: users.filter((u) => u.role === "ADMIN").length,
   };
@@ -45,18 +60,66 @@ export function UserManagement() {
     setShowAddModal(false);
   };
 
-  const handleSubmitAdd = (e) => {
+  const handleSubmitAdd = async (e) => {
     e.preventDefault();
     if (!newUser.name.trim() || !newUser.email.trim()) return;
 
-    const nextId = users.length ? Math.max(...users.map((u) => u.id)) + 1 : 1;
-    const userToAdd = {
-      id: nextId,
-      ...newUser,
-    };
+    try {
+      await axiosClient.post("/admin/users", newUser);
+      await fetchUsers();
+      setShowAddModal(false);
+    } catch (err) {
+      console.error(err);
+      setError("Thêm user thất bại");
+    }
+  };
 
-    setUsers([...users, userToAdd]);
-    setShowAddModal(false);
+  const handleOpenEdit = (user) => {
+    setEditUser({ ...user });
+    setShowEditModal(true);
+  };
+
+  const handleCloseEdit = () => {
+    setShowEditModal(false);
+    setEditUser(null);
+  };
+
+  const handleSubmitEdit = async (e) => {
+    e.preventDefault();
+    if (!editUser.name.trim()) return;
+
+    try {
+      await axiosClient.patch(`/admin/users/${editUser.id}`, {
+        name: editUser.name,
+        role: editUser.role,
+      });
+      await fetchUsers();
+      setShowEditModal(false);
+    } catch (err) {
+      console.error(err);
+      setError("Sửa user thất bại");
+    }
+  };
+
+  const handleDelete = async (userId) => {
+    if (!window.confirm("Bạn chắc chắn muốn xóa user này?")) {
+      return;
+    }
+    try {
+      const id = parseInt(userId);
+      if (isNaN(id)) {
+        setError("ID user không hợp lệ");
+        return;
+      }
+      const response = await axiosClient.delete(`/admin/users/${id}`);
+      console.log("Delete response:", response);
+      await fetchUsers();
+      setError("");
+    } catch (err) {
+      console.error("Delete error:", err);
+      const errorMsg = err.response?.data?.error || err.response?.data?.message || err.message;
+      setError(`Xóa user thất bại: ${errorMsg}`);
+    }
   };
 
   return (
@@ -74,6 +137,9 @@ export function UserManagement() {
           Thêm User
         </button>
       </div>
+
+      {error && <div style={{color: 'red', padding: '10px', marginBottom: '10px'}}>{error}</div>}
+      {loading && <div style={{padding: '10px', marginBottom: '10px'}}>⏳ Đang tải dữ liệu...</div>}
 
       {/* Stats cards */}
       <div className="stats-grid">
@@ -130,7 +196,7 @@ export function UserManagement() {
             <div>
               <div className="card-title">Phân bố vai trò</div>
               <div className="card-value">
-                {roleDistribution.USER} / {roleDistribution.SELLER} /{" "}
+                {roleDistribution.CUSTOMER} / {roleDistribution.SELLER} /{" "}
                 {roleDistribution.ADMIN}
               </div>
             </div>
@@ -169,7 +235,7 @@ export function UserManagement() {
               onChange={(e) => setRoleFilter(e.target.value)}
             >
               <option value="all">Tất cả vai trò</option>
-              <option value="USER">USER</option>
+              <option value="CUSTOMER">CUSTOMER</option>
               <option value="SELLER">SELLER</option>
               <option value="ADMIN">ADMIN</option>
             </select>
@@ -195,6 +261,8 @@ export function UserManagement() {
         searchQuery={searchQuery}
         roleFilter={roleFilter}
         statusFilter={statusFilter}
+        onEdit={handleOpenEdit}
+        onDelete={handleDelete}
       />
 
       {/* MODAL THÊM USER */}
@@ -246,7 +314,7 @@ export function UserManagement() {
                       setNewUser({ ...newUser, role: e.target.value })
                     }
                   >
-                    <option value="USER">USER</option>
+                    <option value="CUSTOMER">CUSTOMER</option>
                     <option value="SELLER">SELLER</option>
                     <option value="ADMIN">ADMIN</option>
                   </select>
@@ -276,6 +344,75 @@ export function UserManagement() {
                 </button>
                 <button type="submit" className="modal-btn primary">
                   Lưu User
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL SỬA USER */}
+      {showEditModal && editUser && (
+        <div className="modal-backdrop">
+          <div className="modal">
+            <div className="modal-header">
+              <h2>Sửa thông tin User</h2>
+              <button
+                type="button"
+                className="modal-close"
+                onClick={handleCloseEdit}
+              >
+                ×
+              </button>
+            </div>
+
+            <form onSubmit={handleSubmitEdit} className="modal-body">
+              <div className="modal-field">
+                <label>Họ tên</label>
+                <input
+                  type="text"
+                  value={editUser.name}
+                  onChange={(e) =>
+                    setEditUser({ ...editUser, name: e.target.value })
+                  }
+                  required
+                />
+              </div>
+
+              <div className="modal-field">
+                <label>Email</label>
+                <input
+                  type="email"
+                  value={editUser.email}
+                  disabled
+                  style={{ backgroundColor: "#f0f0f0", cursor: "not-allowed" }}
+                />
+              </div>
+
+              <div className="modal-field">
+                <label>Vai trò</label>
+                <select
+                  value={editUser.role}
+                  onChange={(e) =>
+                    setEditUser({ ...editUser, role: e.target.value })
+                  }
+                >
+                  <option value="CUSTOMER">CUSTOMER</option>
+                  <option value="SELLER">SELLER</option>
+                  <option value="ADMIN">ADMIN</option>
+                </select>
+              </div>
+
+              <div className="modal-footer">
+                <button
+                  type="button"
+                  className="modal-btn secondary"
+                  onClick={handleCloseEdit}
+                >
+                  Hủy
+                </button>
+                <button type="submit" className="modal-btn primary">
+                  Cập nhật
                 </button>
               </div>
             </form>

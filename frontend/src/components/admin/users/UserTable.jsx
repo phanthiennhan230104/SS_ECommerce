@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react'
 import { Edit, Trash2 } from 'lucide-react'
 
-export function UserTable({ users, searchQuery, roleFilter, statusFilter }) {
+export function UserTable({ users, searchQuery, roleFilter, statusFilter, onEdit, onDelete }) {
   const [sortField, setSortField] = useState('id')
   const [sortDirection, setSortDirection] = useState('asc')
   const [currentPage, setCurrentPage] = useState(1)
@@ -102,14 +102,16 @@ export function UserTable({ users, searchQuery, roleFilter, statusFilter }) {
                     <button
                       type="button"
                       className="icon-button edit"
-                      onClick={() => console.log('Edit', user.id)}
+                      onClick={() => onEdit(user)}
+                      title="Sửa user"
                     >
                       <Edit />
                     </button>
                     <button
                       type="button"
                       className="icon-button delete"
-                      onClick={() => console.log('Delete', user.id)}
+                      onClick={() => onDelete(user.id)}
+                      title="Xóa user"
                     >
                       <Trash2 />
                     </button>
