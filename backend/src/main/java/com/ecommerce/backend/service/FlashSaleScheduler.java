@@ -12,9 +12,11 @@ import java.util.List;
 public class FlashSaleScheduler {
 
     private final ProductRepository productRepository;
+    private final CacheService cacheService;
 
-    public FlashSaleScheduler(ProductRepository productRepository) {
+    public FlashSaleScheduler(ProductRepository productRepository, CacheService cacheService) {
         this.productRepository = productRepository;
+        this.cacheService = cacheService;
     }
 
     // Chạy mỗi 1 phút, dọn các flash sale đã hết giờ
@@ -35,5 +37,8 @@ public class FlashSaleScheduler {
         }
 
         productRepository.saveAll(expired);
+        
+        // ✅ Invalidate cache khi xóa flash sale hết hạn
+        cacheService.invalidateAllProductCaches();
     }
 }

@@ -41,5 +41,11 @@ spring:
           starttls:
             enable: true
 
+# ✅ Custom app config
+app:
+  cache:
+    # TTL cho cache (tính bằng giây) - mặc định 5 phút (300 giây)
+    ttl: 300
+
 server:
   port: 8080

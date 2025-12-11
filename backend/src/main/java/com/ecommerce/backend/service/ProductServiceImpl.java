@@ -18,19 +18,33 @@ public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
+    private final CacheService cacheService;
 
     public ProductServiceImpl(ProductRepository productRepository,
-                              UserRepository userRepository) {
+                              UserRepository userRepository,
+                              CacheService cacheService) {
         this.productRepository = productRepository;
         this.userRepository = userRepository;
+        this.cacheService = cacheService;
     }
 
     @Override
     public List<ProductDto> getAllProducts() {
-        return productRepository.findAll()
+        // ✅ Thử lấy từ cache trước
+        List<ProductDto> cachedProducts = cacheService.getAllProductsFromCache();
+        if (cachedProducts != null) {
+            return cachedProducts;
+        }
+
+        // ❌ Nếu cache miss -> lấy từ DB
+        List<ProductDto> products = productRepository.findAll()
                 .stream()
                 .map(this::toDto)
                 .toList();
+
+        // ✅ Lưu vào cache
+        cacheService.setAllProductsCache(products);
+        return products;
     }
 
     @Override
@@ -78,7 +92,62 @@ public class ProductServiceImpl implements ProductService {
         product.setUpdatedAt(now);
 
         Product saved = productRepository.save(product);
+        
+        // ✅ Invalidate cache khi tạo product mới
+        cacheService.invalidateAllProductCaches();
+
         return toDto(saved);
+    }
+
+    @Override
+    public ProductDto updateProduct(Long productId, ProductDto dto) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy sản phẩm"));
+
+        // cập nhật các trường
+        if (dto.getName() != null && !dto.getName().isEmpty()) {
+            product.setName(dto.getName());
+        }
+        if (dto.getDescription() != null) {
+            product.setDescription(dto.getDescription());
+        }
+        if (dto.getPrice() != null) {
+            product.setPrice(dto.getPrice());
+        }
+        if (dto.getStock() != null) {
+            product.setStock(dto.getStock());
+        }
+        if (dto.getImageUrl() != null) {
+            product.setImageUrl(dto.getImageUrl());
+        }
+        if (dto.getStatus() != null) {
+            try {
+                product.setStatus(Product.Status.valueOf(dto.getStatus()));
+            } catch (IllegalArgumentException ignored) {
+                // giữ nguyên status cũ nếu enum sai
+            }
+        }
+
+        product.setUpdatedAt(LocalDateTime.now());
+        Product saved = productRepository.save(product);
+        
+        // ✅ Invalidate cache khi update product
+        cacheService.invalidateProductCache(productId);
+        cacheService.invalidateAllProductsCache();
+        
+        return toDto(saved);
+    }
+
+    @Override
+    public void deleteProduct(Long productId) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy sản phẩm"));
+        productRepository.delete(product);
+        
+        // ✅ Invalidate cache khi delete product
+        cacheService.invalidateProductCache(productId);
+        cacheService.invalidateAllProductsCache();
+        cacheService.invalidateFlashSaleCache();
     }
 
     // ✅ HÀM MỚI: cấu hình/bật/tắt flash sale cho 1 product
@@ -95,6 +164,10 @@ public class ProductServiceImpl implements ProductService {
             product.setFlashEnd(null);
             product.setUpdatedAt(LocalDateTime.now());
             Product saved = productRepository.save(product);
+            
+            // ✅ Invalidate cache
+            cacheService.invalidateAllProductCaches();
+            
             return toDto(saved);
         }
 
@@ -142,6 +215,10 @@ public class ProductServiceImpl implements ProductService {
         product.setUpdatedAt(LocalDateTime.now());
 
         Product saved = productRepository.save(product);
+        
+        // ✅ Invalidate cache
+        cacheService.invalidateAllProductCaches();
+        
         return toDto(saved);
     }
 
